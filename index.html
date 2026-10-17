@@ -1,0 +1,752 @@
+<!DOCTYPE html><html lang="en"><head>
+<meta charset="utf-8">
+<meta name="generator" content="ReSpec 37.4.1">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<style>
+dfn{cursor:pointer}
+.dfn-panel{position:absolute;z-index:35;min-width:300px;max-width:500px;padding:.5em .75em;margin-top:.6em;font-family:"Helvetica Neue",sans-serif;font-size:small;background:#fff;background:var(--indextable-hover-bg,#fff);color:#000;color:var(--text,#000);box-shadow:0 1em 3em -.4em rgba(0,0,0,.3),0 0 1px 1px rgba(0,0,0,.05);box-shadow:0 1em 3em -.4em var(--tocsidebar-shadow,rgba(0,0,0,.3)),0 0 1px 1px var(--tocsidebar-shadow,rgba(0,0,0,.05));border-radius:2px}
+.dfn-panel:not(.docked)>.caret{position:absolute;top:-9px}
+.dfn-panel:not(.docked)>.caret::after,.dfn-panel:not(.docked)>.caret::before{content:"";position:absolute;border:10px solid transparent;border-top:0;border-bottom:10px solid #fff;border-bottom-color:var(--indextable-hover-bg,#fff);top:0}
+.dfn-panel:not(.docked)>.caret::before{border-bottom:9px solid #a2a9b1;border-bottom-color:var(--indextable-hover-bg,#a2a9b1)}
+.dfn-panel *{margin:0}
+.dfn-panel b{display:block;color:#000;color:var(--text,#000);margin-top:.25em}
+.dfn-panel ul a[href]{color:#333;color:var(--text,#333)}
+.dfn-panel>div{display:flex}
+.dfn-panel a.self-link{font-weight:700;margin-right:auto}
+.dfn-panel .marker{padding:.1em;margin-left:.5em;border-radius:.2em;text-align:center;white-space:nowrap;font-size:90%;color:#040b1c}
+.dfn-panel .marker.dfn-exported{background:#d1edfd;box-shadow:0 0 0 .125em #1ca5f940}
+.dfn-panel .marker.idl-block{background:#8ccbf2;box-shadow:0 0 0 .125em #0670b161}
+.dfn-panel .marker.cddl-block{background:#8ccbf2;box-shadow:0 0 0 .125em #0670b161}
+.dfn-panel a:not(:hover){text-decoration:none!important;border-bottom:none!important}
+.dfn-panel a[href]:hover{border-bottom-width:1px}
+.dfn-panel ul{padding:0}
+.dfn-panel li{margin-left:1em}
+.dfn-panel.docked{position:fixed;left:.5em;top:unset;bottom:2em;margin:0 auto;max-width:calc(100vw - .75em * 2 - .5em - .2em * 2);max-height:30vh;overflow:auto}
+</style>
+    
+    
+<meta name="color-scheme" content="light">
+    
+<title>Typed Context Protocol (tcxp)</title>
+    
+<style>
+
+      .rule {
+        margin: 1.5em 0;
+      }
+      .rule-addr {
+        margin: 0 0 0.25em;
+        font-size: 0.9em;
+      }
+      .rule-addr a {
+        text-decoration: none;
+      }
+      pre.address {
+        white-space: pre-wrap;
+        overflow-wrap: anywhere;
+      }
+      .render-error {
+        padding: 1em;
+        border: 2px solid #c00;
+        border-radius: 4px;
+      }
+    
+</style>
+
+    
+    
+
+    
+    
+
+    
+    
+    
+    
+  
+<style id="respec-mainstyle">
+@keyframes pop{
+0%{transform:scale(1,1)}
+25%{transform:scale(1.25,1.25);opacity:.75}
+100%{transform:scale(1,1)}
+}
+a.internalDFN{color:inherit;border-bottom:1px solid #99c;text-decoration:none}
+a.externalDFN{color:inherit;border-bottom:1px dotted #ccc;text-decoration:none}
+a.bibref{text-decoration:none}
+.respec-offending-element:target{animation:pop .25s ease-in-out 0s 1}
+.respec-offending-element,a[href].respec-offending-element{text-decoration:red wavy underline}
+@supports not (text-decoration:red wavy underline){
+.respec-offending-element:not(pre){display:inline-block}
+.respec-offending-element{background:url(data:image/gif;base64,R0lGODdhBAADAPEAANv///8AAP///wAAACwAAAAABAADAEACBZQjmIAFADs=) bottom repeat-x}
+}
+#references :target{background:#eaf3ff;animation:pop .4s ease-in-out 0s 1}
+@media (prefers-color-scheme:dark){
+#references :target{background:color-mix(in srgb, #eaf3ff 15%, transparent)}
+}
+body:has(input[name=color-scheme][value=dark]:checked) #references :target{background:color-mix(in srgb, #eaf3ff 15%, transparent)}
+cite .bibref{font-style:italic}
+a[href].orcid{padding-left:4px;padding-right:4px}
+a[href].orcid>svg{margin-bottom:-2px}
+ol.tof,ul.tof{list-style:none outside none}
+.caption{margin-top:.5em;font-style:italic}
+#issue-summary>ul{column-count:2}
+#issue-summary li{list-style:none}
+details.respec-tests-details{margin-left:1em;display:inline-block;vertical-align:top}
+details.respec-tests-details>*{padding-right:2em}
+details.respec-tests-details[open]{z-index:999999;position:absolute;border:thin solid #cad3e2;border-radius:.3em;background-color:#fff;padding-bottom:.5em}
+details.respec-tests-details[open]>summary{border-bottom:thin solid #cad3e2;padding-left:1em;margin-bottom:1em;line-height:2em}
+details.respec-tests-details>ul{width:100%;margin-top:-.3em}
+details.respec-tests-details>li{padding-left:1em}
+.self-link:hover{opacity:1;text-decoration:none;background-color:transparent}
+aside.example .marker>a.self-link{color:inherit}
+.header-wrapper{display:flex;align-items:baseline}
+:is(h2,h3,h4,h5,h6):not(:where(#toc>h2,#abstract>h2,#sotd>h2,.head>h2)):has(+a.self-link){position:relative;left:-.5em}
+:is(h2,h3,h4,h5,h6):not(:where(#toch2))+a.self-link{color:inherit;order:-1;position:relative;left:-1.1em;font-size:1rem;opacity:.8;text-decoration:none}
+:is(h2,h3,h4,h5,h6)+a.self-link::before{content:"§"}
+:is(h2,h3)+a.self-link{top:-.2em}
+:is(h2,h3)+a.self-link::before{color:var(--heading-text)}
+@media (max-width:767px){
+dd{margin-left:0}
+}
+@media print{
+.removeOnSave{display:none}
+}
+body:has(input[name=color-scheme][value=light]:checked),head:not(:has(meta[name=color-scheme][content~=dark]))+body{color-scheme:light}
+body:has(input[name=color-scheme][value=dark]:checked){color-scheme:dark}
+</style>
+<style>
+ul.index{columns:30ch;column-gap:1.5em}
+ul.index li{list-style:inherit}
+ul.index li span{color:inherit;cursor:pointer;white-space:normal}
+#index-defined-here ul.index li{font-size:.9rem}
+ul.index code{color:inherit}
+#index-defined-here .print-only{display:none}
+@media print{
+#index-defined-here .print-only{display:initial}
+}
+</style>
+<meta name="description" content="This document specifies the Typed Context Protocol (tcxp): the syntax of tcxp addresses, how they are written, encoded and sent over a network, the context and spike objects they carry, and the sensor objects and governors that evaluate them. It also defines the tcxp document and its proposed media type, text/tcxp.">
+<style>
+.hljs,body:has(input[name=color-scheme][value=light]:checked) .hljs,head:not(:has(meta[name=color-scheme][content~=dark]))+body .hljs{--base:#fafafa;--mono-1:#383a42;--mono-2:#686b77;--mono-3:#717277;--hue-1:#0b76c5;--hue-2:#336ae3;--hue-3:#a626a4;--hue-4:#42803c;--hue-5:#ca4706;--hue-5-2:#c91243;--hue-6:#986801;--hue-6-2:#9a6a01}
+@media (prefers-color-scheme:dark){
+.hljs{
+  --base: #282c34;
+  --mono-1: #abb2bf;
+  --mono-2: #818896;
+  --mono-3: #5c6370;
+  --hue-1: #56b6c2;
+  --hue-2: #61aeee;
+  --hue-3: #c678dd;
+  --hue-4: #98c379;
+  --hue-5: #e06c75;
+  --hue-5-2: #be5046;
+  --hue-6: #d19a66;
+  --hue-6-2: #e6c07b;
+}
+}
+body:has(input[name=color-scheme][value=dark]:checked) .hljs{
+  --base: #282c34;
+  --mono-1: #abb2bf;
+  --mono-2: #818896;
+  --mono-3: #5c6370;
+  --hue-1: #56b6c2;
+  --hue-2: #61aeee;
+  --hue-3: #c678dd;
+  --hue-4: #98c379;
+  --hue-5: #e06c75;
+  --hue-5-2: #be5046;
+  --hue-6: #d19a66;
+  --hue-6-2: #e6c07b;
+}
+.hljs{display:block;overflow-x:auto;padding:.5em;color:#383a42;color:var(--mono-1,#383a42);background:#fafafa;background:var(--base,#fafafa)}
+.hljs-comment,.hljs-quote{color:#717277;color:var(--mono-3,#717277);font-style:italic}
+.hljs-doctag,.hljs-formula,.hljs-keyword{color:#a626a4;color:var(--hue-3,#a626a4)}
+.hljs-deletion,.hljs-name,.hljs-section,.hljs-selector-tag,.hljs-subst{color:#ca4706;color:var(--hue-5,#ca4706);font-weight:700}
+.hljs-literal{color:#0b76c5;color:var(--hue-1,#0b76c5)}
+.hljs-addition,.hljs-attribute,.hljs-meta-string,.hljs-regexp,.hljs-string{color:#42803c;color:var(--hue-4,#42803c)}
+.hljs-built_in,.hljs-class .hljs-title{color:#9a6a01;color:var(--hue-6-2,#9a6a01)}
+.hljs-attr,.hljs-number,.hljs-selector-attr,.hljs-selector-class,.hljs-selector-pseudo,.hljs-template-variable,.hljs-type,.hljs-variable{color:#986801;color:var(--hue-6,#986801)}
+.hljs-bullet,.hljs-link,.hljs-meta,.hljs-selector-id,.hljs-symbol,.hljs-title{color:#336ae3;color:var(--hue-2,#336ae3)}
+.hljs-emphasis{font-style:italic}
+.hljs-strong{font-weight:700}
+.hljs-link{text-decoration:underline}
+</style>
+<style>
+var:hover{text-decoration:underline;cursor:pointer}
+var.respec-hl{color:var(--color,#000);background-color:var(--bg-color);box-shadow:0 0 0 2px var(--bg-color)}
+@media (prefers-color-scheme:dark){
+var.respec-hl{filter:saturate(.9) brightness(.9)}
+}
+var.respec-hl-c1{--bg-color:#f4d200}
+var.respec-hl-c2{--bg-color:#ff87a2}
+var.respec-hl-c3{--bg-color:#96e885}
+var.respec-hl-c4{--bg-color:#3eeed2}
+var.respec-hl-c5{--bg-color:#eacfb6}
+var.respec-hl-c6{--bg-color:#82ddff}
+var.respec-hl-c7{--bg-color:#ffbcf2}
+@media print{
+var.respec-hl{background:0 0;color:#000;box-shadow:unset}
+}
+</style>
+<style>
+var[data-type]{position:relative}
+var[data-type]::after,var[data-type]::before{position:absolute;left:50%;top:-6px;opacity:0;transition:opacity .4s;pointer-events:none}
+var[data-type]::before{content:"";transform:translateX(-50%);border-width:4px 6px 0 6px;border-style:solid;border-color:transparent;border-top-color:#222}
+var[data-type]::after{content:attr(data-type);transform:translateX(-50%) translateY(-100%);background:#222;text-align:center;font-family:"Dank Mono","Fira Code",monospace;font-style:normal;padding:6px;border-radius:3px;color:#daca88;text-indent:0;font-weight:400}
+var[data-type]:hover::after,var[data-type]:hover::before{opacity:1}
+</style>
+<script id="initialUserConfig" type="application/json">{
+  "specStatus": "CG-DRAFT",
+  "shortName": "tcxp",
+  "editors": [
+    {
+      "name": "Ron Itelman",
+      "url": "mailto:ron@ronitelman.com"
+    }
+  ],
+  "latestVersion": null,
+  "localBiblio": {
+    "RFC10008": {
+      "title": "The HTTP QUERY Method",
+      "href": "https://www.rfc-editor.org/rfc/rfc10008",
+      "publisher": "IETF",
+      "status": "Proposed Standard",
+      "id": "rfc10008"
+    }
+  },
+  "group": "typed-context-protocol",
+  "github": "typed-context-protocol/specification",
+  "preProcess": [
+    null
+  ],
+  "publishISODate": "2026-10-17T00:00:00.000Z",
+  "generatedSubtitle": "Draft Community Group Report 17 October 2026"
+}</script>
+<link rel="stylesheet" href="https://www.w3.org/StyleSheets/TR/2021/cg-draft">
+<link rel="stylesheet" href="https://www.w3.org/StyleSheets/TR/2021/dark.css" disabled=""></head>
+  <body class="h-entry"><div class="head">
+    
+    <h1 id="title" class="title">Typed Context Protocol (tcxp)</h1> 
+    <p id="w3c-state">
+      <a href="https://www.w3.org/standards/types#reports">Draft Community Group Report</a>
+      <time class="dt-published" datetime="2026-10-17">17 October 2026</time>
+    </p>
+    <dl>
+      
+      <dt>Latest published version:</dt><dd>
+                none
+              </dd>
+      <dt>Latest editor's draft:</dt><dd><a href="https://typed-context-protocol.github.io/specification/">https://typed-context-protocol.github.io/specification/</a></dd>
+      
+      
+      
+      
+      <dt>
+                Editor:
+              </dt><dd class="editor p-author h-card vcard">
+    <a class="ed_mailto u-email email p-name" href="mailto:ron@ronitelman.com">Ron Itelman</a>
+  </dd>
+      
+      
+      <dt>Feedback:</dt><dd>
+        <a href="https://github.com/typed-context-protocol/specification/">GitHub typed-context-protocol/specification</a>
+        (<a href="https://github.com/typed-context-protocol/specification/pulls/">pull requests</a>,
+        <a href="https://github.com/typed-context-protocol/specification/issues/new/choose">new issue</a>,
+        <a href="https://github.com/typed-context-protocol/specification/issues/">open issues</a>)
+      </dd>
+      
+    </dl>
+    
+    <p class="copyright">
+            <a href="https://www.w3.org/policies/#copyright">Copyright</a>
+            ©
+            2026
+            
+            the Contributors to the Typed Context Protocol (tcxp)
+            Specification, published by the
+            <a href="https://www.w3.org/groups/cg/typed-context-protocol">Typed Context Protocol Community Group</a> under the
+            <a href="https://www.w3.org/community/about/agreements/cla/">W3C Community Contributor License Agreement (CLA)</a>. A human-readable
+                    <a href="https://www.w3.org/community/about/agreements/cla-deed/">summary</a>
+                    is available.
+                  
+          </p>
+    <hr title="Separator for header">
+  </div><section id="abstract" class="introductory"><h2>Abstract</h2><p>This document specifies the Typed Context Protocol (tcxp): the syntax of tcxp addresses, how they are written, encoded and sent over a network, the context and spike objects they carry, and the sensor objects and governors that evaluate them. It also defines the tcxp document and its proposed media type, <code>text/tcxp</code>.</p></section><section id="sotd" class="introductory"><h2>Status of This Document</h2><p>
+      This specification was published by the
+      <a href="https://www.w3.org/groups/cg/typed-context-protocol">Typed Context Protocol Community Group</a>. It is not a W3C Standard nor is it
+      on the W3C Standards Track.
+      
+              Please note that under the
+              <a href="https://www.w3.org/community/about/agreements/cla/">W3C Community Contributor License Agreement (CLA)</a>
+              there is a limited opt-out and other conditions apply.
+            
+      Learn more about
+      <a href="https://www.w3.org/community/">W3C Community and Business Groups</a>.
+    </p><p>This is an alpha draft. Every rule in it is a design proposal verified by the editors; implementation experience and test results will be reported in later drafts. Each rule is identified by its tcxp address, <code>tcxp://tcxp.org/rule/N</code>, which is permanent once published, and can be linked at <code>#rule-N</code>.</p><p>
+    <a href="https://github.com/typed-context-protocol/specification/issues/">GitHub Issues</a> are preferred for
+            discussion of this specification.
+          
+    
+  </p></section><nav id="toc"><h2 class="introductory" id="table-of-contents">Table of Contents</h2><ol class="toc"><li class="tocline"><a class="tocxref" href="#abstract">Abstract</a></li><li class="tocline"><a class="tocxref" href="#sotd">Status of This Document</a></li><li class="tocline"><a class="tocxref" href="#conformance"><bdi class="secno">1. </bdi>Conformance</a></li><li class="tocline"><a class="tocxref" href="#rules"><bdi class="secno">2. </bdi>Rules</a></li><li class="tocline"><a class="tocxref" href="#media-type-registration"><bdi class="secno">A. </bdi>Media type registration</a></li><li class="tocline"><a class="tocxref" href="#rule-index"><bdi class="secno">B. </bdi>Rule index</a></li><li class="tocline"><a class="tocxref" href="#index"><bdi class="secno">C. </bdi>Index</a><ol class="toc"><li class="tocline"><a class="tocxref" href="#index-defined-here"><bdi class="secno">C.1 </bdi>Terms defined by this specification</a></li><li class="tocline"><a class="tocxref" href="#index-defined-elsewhere"><bdi class="secno">C.2 </bdi>Terms defined by reference</a></li></ol></li><li class="tocline"><a class="tocxref" href="#references"><bdi class="secno">D. </bdi>References</a><ol class="toc"><li class="tocline"><a class="tocxref" href="#normative-references"><bdi class="secno">D.1 </bdi>Normative references</a></li></ol></li></ol></nav><section id="conformance"><div class="header-wrapper"><h2 id="x1-conformance"><bdi class="secno">1. </bdi>Conformance</h2><a class="self-link" href="#conformance" aria-label="Permalink for Section 1."></a></div><p>As well as sections marked as non-normative, all authoring guidelines, diagrams, examples, and notes in this specification are non-normative. Everything else in this specification is normative.</p><p>Every rule in this document, identified by its <code>tcxp://tcxp.org/rule/</code> address, is normative. Breaking a rule breaks the protocol.</p></section><section id="rules"><div class="header-wrapper"><h2 id="x2-rules"><bdi class="secno">2. </bdi>Rules</h2><a class="self-link" href="#rules" aria-label="Permalink for Section 2."></a></div><div class="rule" id="rule-0"><p class="rule-addr"><a href="#rule-0"><code>tcxp://tcxp.org/rule/0</code></a></p><p>A tcxp address is <code>tcxp:</code> followed by a ground and a path, then an optional <code>?&lt;json&gt;</code>. The ground is <code>/</code> (virtual), <code>//</code> (network) or <code>///</code> (local). An <code>@</code> at the start of the path's second segment makes the address a call.</p><p>Every combination of space and call, shown up to the optional <code>?&lt;json&gt;</code>:</p><table class="data"><thead><tr><th>Address</th><th>Space</th><th>Ground</th><th>Call</th><th>Path</th></tr></thead><tbody><tr><td><code>tcxp:/example.com/fn/check-forecast</code></td><td>virtual</td><td><code>/</code></td><td>no</td><td><code>example.com/fn/check-forecast</code></td></tr><tr><td><code>tcxp:/example.com/@fn/check-forecast</code></td><td>virtual</td><td><code>/</code></td><td>yes</td><td><code>example.com/@fn/check-forecast</code></td></tr><tr><td><code>tcxp:/foo/bar</code></td><td>virtual</td><td><code>/</code></td><td>no</td><td><code>foo/bar</code></td></tr><tr><td><code>tcxp:/foo/@bar</code></td><td>virtual</td><td><code>/</code></td><td>yes</td><td><code>foo/@bar</code></td></tr><tr><td><code>tcxp://example.com/fn/check-forecast</code></td><td>network</td><td><code>//</code></td><td>no</td><td><code>example.com/fn/check-forecast</code></td></tr><tr><td><code>tcxp://example.com/@fn/check-forecast</code></td><td>network</td><td><code>//</code></td><td>yes</td><td><code>example.com/@fn/check-forecast</code></td></tr><tr><td><code>tcxp://foo/bar</code></td><td>network</td><td><code>//</code></td><td>no</td><td><code>foo/bar</code></td></tr><tr><td><code>tcxp://foo/@bar</code></td><td>network</td><td><code>//</code></td><td>yes</td><td><code>foo/@bar</code></td></tr><tr><td><code>tcxp:///example.com/fn/check-forecast</code></td><td>local</td><td><code>///</code></td><td>no</td><td><code>example.com/fn/check-forecast</code></td></tr><tr><td><code>tcxp:///example.com/@fn/check-forecast</code></td><td>local</td><td><code>///</code></td><td>yes</td><td><code>example.com/@fn/check-forecast</code></td></tr><tr><td><code>tcxp:///foo/bar</code></td><td>local</td><td><code>///</code></td><td>no</td><td><code>foo/bar</code></td></tr><tr><td><code>tcxp:///foo/@bar</code></td><td>local</td><td><code>///</code></td><td>yes</td><td><code>foo/@bar</code></td></tr></tbody></table></div><div class="rule" id="rule-1"><p class="rule-addr"><a href="#rule-1"><code>tcxp://tcxp.org/rule/1</code></a></p><p>The Typed Context Protocol (tcxp) is a set of guarantees, enforced by logical rules, to observe, measure, and engineer interactions with Typed Context Objects over time.</p><p>As a protocol, tcxp allows any design choice except breaking these rules. Breaking a rule breaks the protocol.</p></div><div class="rule" id="rule-2"><p class="rule-addr"><a href="#rule-2"><code>tcxp://tcxp.org/rule/2</code></a></p><p>Every tcxp address starts with <code>tcxp:</code>, in lowercase, with nothing before it.</p><p>The scheme name tells any software that the rest of the string is a tcxp address. <code>tcxp</code> is <a href="https://www.iana.org/assignments/uri-schemes/prov/tcxp">provisionally registered with IANA</a> (2026-10-09). Software reading an address should also accept an uppercase scheme, since URI schemes are case-insensitive, but addresses are always written in lowercase.</p></div><div class="rule" id="rule-3"><p class="rule-addr"><a href="#rule-3"><code>tcxp://tcxp.org/rule/3</code></a></p><p>Two slashes after <code>tcxp:</code> mean a network address. <code>tcxp://&lt;domain&gt;/…</code> belongs to whoever owns <code>&lt;domain&gt;</code>. Where tcxp is not supported natively, <code>tcxp://&lt;path&gt;</code> is sent to <code>https://&lt;path&gt;</code>.</p><p>This works the same way as <code>https://</code>: whoever controls the domain controls every name under it, with no registration needed. The domain is written in lowercase, with no user name or port. The path is everything after the ground, and it is percent-encoded when sent. For example, <code>tcxp://example.com/@fn/check-forecast</code> belongs to <code>example.com</code>, and where tcxp is not supported natively it is sent to:</p><pre class="nolinks" aria-busy="false"><code class="hljs js"><span class="hljs-attr">https</span>:<span class="hljs-comment">//example.com/@fn/check-forecast</span></code></pre></div><div class="rule" id="rule-4"><p class="rule-addr"><a href="#rule-4"><code>tcxp://tcxp.org/rule/4</code></a></p><p>One slash after <code>tcxp:</code> means a virtual address: a name in memory. It has no host and is never fetched.</p><p>A virtual address is written in plain form. It names a member of <code>tcxp</code>. For example, <code>tcxp:/notes/idea-1</code> names, in memory:</p><pre class="nolinks" aria-busy="false"><code class="hljs js">tcxp.<span class="hljs-property">notes</span>[<span class="hljs-string">"idea-1"</span>]</code></pre></div><div class="rule" id="rule-5"><p class="rule-addr"><a href="#rule-5"><code>tcxp://tcxp.org/rule/5</code></a></p><p>A path is everything after the ground, up to the <code>?</code> if there is one: the boundary and the pointer, written as segments separated by <code>/</code>. Every segment has at least one character, and segments are case-sensitive.</p><p>A path names a thing, for example <code>tcxp://example.com/forecasts/q3/v2</code>. Because every segment has at least one character, a path never contains <code>//</code>, never ends with <code>/</code>, and always has at least two segments: the boundary and the pointer. <code>Forecast</code> and <code>forecast</code> are different segments. The <code>@</code> that marks a call is syntax, not part of a segment's name. A segment is written in plain form, and is percent-encoded only where a URI is required. For example, plain and then as a URI:</p><pre class="nohighlight address nolinks">tcxp://example.com/notes/My Notes
+tcxp://example.com/notes/My%20Notes</pre></div><div class="rule" id="rule-6"><p class="rule-addr"><a href="#rule-6"><code>tcxp://tcxp.org/rule/6</code></a></p><p>A tcxp address is a URI ([<cite><a class="bibref" data-link-type="biblio" href="#bib-rfc3986" title="Uniform Resource Identifier (URI): Generic Syntax">RFC3986</a></cite>]), and the JSON in it is JSON ([<cite><a class="bibref" data-link-type="biblio" href="#bib-rfc8259" title="The JavaScript Object Notation (JSON) Data Interchange Format">RFC8259</a></cite>]). tcxp defers to both standards: no tcxp rule may allow what they forbid, and the plain form is shaped to conform to the URI.</p><p>This rule governs every other rule. When a rule and either standard could differ, the standard decides and the rule is rewritten to conform.</p><p>The plain form is the URI with its percent-encoding decoded so it can be read. The two convert into each other exactly: encoding the plain form gives the URI, and decoding the URI gives the plain form, including the JSON after the <code>?</code>. Encoding follows <a href="https://www.rfc-editor.org/info/rfc3986/#section-2.5" id="ref-for-index-term-rfc-3986-section-2-5-1">RFC 3986, section 2.5</a>: a name is encoded as UTF-8, and every octet outside the unreserved set is percent-encoded with uppercase hex digits (<a href="https://www.rfc-editor.org/info/rfc3986/#section-6.2.2" id="ref-for-index-term-section-6-2-2-1">section 6.2.2</a>), so each plain form has exactly one URI. The <code>/</code>, <code>@</code> and <code>?</code> are syntax and are never encoded. For example, plain and then as a URI:</p><pre class="nohighlight address nolinks">tcxp://example.com/notes/My Notes
+tcxp://example.com/notes/My%20Notes</pre></div><div class="rule" id="rule-7"><p class="rule-addr"><a href="#rule-7"><code>tcxp://tcxp.org/rule/7</code></a></p><p>The context is one JSON object with exactly five lists: <code>intent</code>, <code>observe</code>, <code>reason</code>, <code>decide</code> and <code>trace</code>. It is held by the <code>context</code> key of <code>state</code>, and <code>context</code> is the only key in <code>state</code>.</p><p>All five lists are always present, even when empty, so a reader never has to guess whether a missing list means "none" or "not sent." Reading the context never fetches any address in it. For example, a call with an empty context, in plain form:</p><pre class="nohighlight address nolinks">tcxp://example.com/@fn/check-forecast?{"params":[{"key":"quarter","value":"q3"}],"state":{"context":{"decide":[],"intent":[],"observe":[],"reason":[],"trace":[]}}}</pre></div><div class="rule" id="rule-8"><p class="rule-addr"><a href="#rule-8"><code>tcxp://tcxp.org/rule/8</code></a></p><p>A tcxp address has no length limit. A network address is sent to its domain with the HTTP QUERY method, so nothing is lost however long it is.</p><p>The request target is the address up to the <code>?</code>, percent-encoded, at <code>https://</code>. The JSON after the <code>?</code> is the request body, with media type <code>application/json</code>. QUERY ([<cite><a class="bibref" data-link-type="biblio" href="#bib-rfc10008" title="The HTTP QUERY Method">RFC10008</a></cite>]) is safe and idempotent like GET, but carries a body, so a long address is never cut off. For example, this plain address:</p><pre class="nohighlight address nolinks">tcxp://example.com/@fn/check-forecast?{"params":[{"key":"quarter","value":"q3"}],"state":{"context":{"decide":[],"intent":[],"observe":[],"reason":[],"trace":[]}}}</pre><p>is sent as:</p><pre class="nolinks" aria-busy="false"><code class="hljs js"><span class="hljs-title function_">fetch</span>(<span class="hljs-string">"https://example.com/@fn/check-forecast"</span>, {
+  <span class="hljs-attr">method</span>: <span class="hljs-string">"QUERY"</span>,
+  <span class="hljs-attr">headers</span>: { <span class="hljs-string">"Content-Type"</span>: <span class="hljs-string">"application/json"</span> },
+  <span class="hljs-attr">body</span>: <span class="hljs-string">'{"params":[{"key":"quarter","value":"q3"}],"state":{"context":{"decide":[],"intent":[],"observe":[],"reason":[],"trace":[]}}}'</span>
+})</code></pre></div><div class="rule" id="rule-9"><p class="rule-addr"><a href="#rule-9"><code>tcxp://tcxp.org/rule/9</code></a></p><p>A spike has exactly four facets, as the keys <code>data</code>, <code>meaning</code>, <code>structure</code> and <code>ground</code>.</p><p>A spike is the object an observation creates. Each facet is an array of objects, and each object in it is a row, so a facet can hold any number of entries. All four keys are always present, in lowercase with exactly these names, so any reader is guaranteed to find them. A spike with a missing key, an extra key, or a key spelled differently, such as <code>Meaning</code> or <code>Ground</code>, is rejected.</p></div><div class="rule" id="rule-10"><p class="rule-addr"><a href="#rule-10"><code>tcxp://tcxp.org/rule/10</code></a></p><p><code>data</code> is the anchor facet: it is what gets matched against the sensor object. <code>meaning</code>, <code>structure</code> and <code>ground</code> are the context facets, built around the anchor.</p><p>If the sensor object has the rule "MATCH the word yesterday," the anchor is the observed word <code>yesterday</code>, and the context facets are built around it. Only the anchor is matched against the sensor object; the context facets describe the anchor, and are never matched in its place.</p></div><div class="rule" id="rule-11"><p class="rule-addr"><a href="#rule-11"><code>tcxp://tcxp.org/rule/11</code></a></p><p>A sensor object is a JSON object with exactly one key, <code>sensor</code>: an array whose entries each have exactly three keys, <code>trigger</code>, <code>emit</code> and <code>else</code>. <code>trigger</code> is a tcxp address; <code>emit</code> and <code>else</code> are each a tcxp address, or <code>null</code> when there is nothing to do.</p><p>When the trigger is true, <code>emit</code> is evaluated; when it is false, <code>else</code> is evaluated. All three keys are always present, so a reader never has to guess whether a missing <code>else</code> means "nothing" or "not sent."</p></div><div class="rule" id="rule-12"><p class="rule-addr"><a href="#rule-12"><code>tcxp://tcxp.org/rule/12</code></a></p><p>Logic primitives live at <code>tcxp://tcxp.org/logic/&lt;type&gt;/&lt;name&gt;</code>, where <code>&lt;type&gt;</code> is one of <code>string</code>, <code>number</code>, <code>boolean</code>, <code>array</code> or <code>object</code>. A trigger calls one with an <code>@</code>, with its inputs in <code>params</code>.</p><p>For example, a trigger that checks for the word <code>yesterday</code>, in plain form:</p><pre class="nohighlight address nolinks">tcxp://tcxp.org/@logic/string/contains?{"params":[{"key":"word","value":"yesterday"}],"state":{"context":{"decide":[],"intent":[],"observe":[],"reason":[],"trace":[]}}}</pre></div><div class="rule" id="rule-13"><p class="rule-addr"><a href="#rule-13"><code>tcxp://tcxp.org/rule/13</code></a></p><p>Every timestamp is written in UTC as defined by [<cite><a class="bibref" data-link-type="biblio" href="#bib-rfc3339" title="Date and Time on the Internet: Timestamps">RFC3339</a></cite>], with milliseconds and a trailing <code>Z</code>, and is exactly 24 characters long, for example <code>2026-10-10T16:35:12.345Z</code>.</p><p>The shape is <code>YYYY-MM-DDTHH:MM:SS.sssZ</code>. Milliseconds are always three digits, even when they are zero (<code>.000</code>), and UTC is always written as <code>Z</code>, never as <code>+00:00</code>. Because there is one format with a fixed length, each moment has exactly one spelling, and sorting timestamps as text puts them in time order.</p></div><div class="rule" id="rule-14"><p class="rule-addr"><a href="#rule-14"><code>tcxp://tcxp.org/rule/14</code></a></p><p>Every entry in the five lists of a context and in the four facets of a spike is a row: a JSON object with exactly two keys, <code>fingerprint</code> and <code>ref</code>. <code>ref</code> is the tcxp address of what the row is about, and <code>fingerprint</code> records what left the row there.</p><p><code>fingerprint</code> is a JSON object. Each key is a tcxp address naming what it records, and each value is any JSON value. Every fingerprint has the key <code>tcxp://tcxp.org/fingerprint/when</code>, whose value is the timestamp at which the row was written, so every row can be sorted by time. Any other keys are up to whoever writes the row. A JSON object has no order and never repeats a key, so canonical form gives each fingerprint exactly one spelling; to record several values for one key, such as two authors, use an array. A row's position in its list is its index, so rows have no index key. For example, a row that also records who wrote it:</p><pre class="nolinks" aria-busy="false"><code class="hljs js">{<span class="hljs-string">"fingerprint"</span>:{<span class="hljs-string">"tcxp://example.com/fingerprint/who"</span>:<span class="hljs-string">"tcxp://example.com/people/ron"</span>,<span class="hljs-string">"tcxp://tcxp.org/fingerprint/when"</span>:<span class="hljs-string">"2026-10-11T13:06:04.217Z"</span>},<span class="hljs-string">"ref"</span>:<span class="hljs-string">"tcxp://example.com/units/celsius"</span>}</code></pre></div><div class="rule" id="rule-15"><p class="rule-addr"><a href="#rule-15"><code>tcxp://tcxp.org/rule/15</code></a></p><p>Three slashes after <code>tcxp:</code> mean a local address: a file on the local machine, for example <code>tcxp:///projects/docs/rules.tcxp</code>. It has an empty host and is resolved on the local machine, never over a network.</p><p>This is the same form as <code>file:///</code> ([<cite><a class="bibref" data-link-type="biblio" href="#bib-rfc8089" title="The &quot;file&quot; URI Scheme">RFC8089</a></cite>]): an empty host followed by an absolute path. Relative paths such as <code>../rules.tcxp</code> are never used. A local address is written in plain form, for example <code>tcxp:///projects/My Notes.txt</code>. With the <code>@</code>, the address is a call to a file on the local machine, not to a member in memory: <code>tcxp:///foo/@bar</code> is a local call, and <code>tcxp:/foo/@bar</code> is a virtual call.</p></div><div class="rule" id="rule-16"><p class="rule-addr"><a href="#rule-16"><code>tcxp://tcxp.org/rule/16</code></a></p><p>A tcxp document is a text file encoded in UTF-8 ([<cite><a class="bibref" data-link-type="biblio" href="#bib-rfc3629" title="UTF-8, a transformation format of ISO 10646">RFC3629</a></cite>]), with the file extension <code>.tcxp</code> and the proposed media type <code>text/tcxp</code>. Reading, parsing or displaying it never executes it and never fetches any address it contains.</p><p>A tcxp document holds content that follows these rules; how it is used is up to whatever is using it. tcxp gives names no rules of their own: a domain follows the same rules it has in <code>https://</code>, and every other segment is percent-encoded from its UTF-8 bytes when sent over a network, as <a href="https://www.rfc-editor.org/info/rfc3986/#section-2.5" id="ref-for-index-term-rfc-3986-section-2-5-2">RFC 3986, section 2.5</a> requires of new URI schemes. For example, written in a document and then sent over a network:</p><pre class="nohighlight address nolinks">tcxp://example.com/notes/Café
+tcxp://example.com/notes/Caf%C3%A9</pre><p>Reading a document returns its text and nothing else. For example, if <code>forecast.tcxp</code> contains <code>tcxp://example.com/@fn/check-forecast</code>:</p><pre class="nolinks" aria-busy="false"><code class="hljs js"><span class="hljs-keyword">const</span> text = <span class="hljs-keyword">await</span> fs.<span class="hljs-property">promises</span>.<span class="hljs-title function_">readFile</span>(<span class="hljs-string">"forecast.tcxp"</span>, <span class="hljs-string">"utf8"</span>)
+<span class="hljs-comment">// text is the document as written. Nothing was called or fetched.</span>
+<span class="hljs-comment">// What happens next is up to whatever is using the document.</span></code></pre></div><div class="rule" id="rule-17"><p class="rule-addr"><a href="#rule-17"><code>tcxp://tcxp.org/rule/17</code></a></p><p>A governor is an evaluator: it evaluates tcxp addresses.</p><p>A governor can reference anything in the context, but it does not hold the context.</p></div><div class="rule" id="rule-18"><p class="rule-addr"><a href="#rule-18"><code>tcxp://tcxp.org/rule/18</code></a></p><p>The slashes after <code>tcxp:</code> follow standard URI syntax (<a href="https://www.rfc-editor.org/info/rfc3986/#section-3" id="ref-for-index-term-rfc-3986-section-3-1">RFC 3986, section 3</a>): <code>//</code> is followed by a host, <code>///</code> is an empty host followed by an absolute path, and <code>/</code> is an absolute path with no host.</p><p>These are the same forms <code>file:</code> uses ([<cite><a class="bibref" data-link-type="biblio" href="#bib-rfc8089" title="The &quot;file&quot; URI Scheme">RFC8089</a></cite>]): <code>file:///etc/hosts</code> has an empty host, and <code>file:/etc/hosts</code> has no host. Both name the same file. In tcxp, the three forms mean different things: a network address, a local address and a virtual address.</p></div><div class="rule" id="rule-19"><p class="rule-addr"><a href="#rule-19"><code>tcxp://tcxp.org/rule/19</code></a></p><p>Every tcxp address has the form <code>tcxp:&lt;ground&gt;&lt;boundary&gt;/&lt;optional @&gt;&lt;pointer&gt;</code>, followed by an optional <code>?&lt;json&gt;</code>. When present, <code>&lt;json&gt;</code> is a JSON object with exactly two keys: <code>params</code>, an array of key-value pairs, and <code>state</code>, one object. An <code>@</code> right after the boundary makes the address a call, and it is the only <code>@</code> before the <code>?</code>.</p><p>The ground is <code>/</code> (virtual), <code>//</code> (network) or <code>///</code> (local). The boundary is the first segment after the ground, such as <code>example.com</code> or <code>foo</code>, and the pointer is the rest of the path. <code>params</code> holds the inputs, in order, and <code>state</code> holds the state before the call. An address without <code>@</code> is a reference, or a call written down but not made. Values inside the JSON may contain <code>@</code>. The JSON is in canonical form ([<cite><a class="bibref" data-link-type="biblio" href="#bib-rfc8785" title="JSON Canonicalization Scheme (JCS)">RFC8785</a></cite>]). For example, decoded so it can be read:</p><pre class="nohighlight address nolinks">tcxp:/foo/@bar?{"params":[{"key":"x","value":1}],"state":{"context":{"decide":[],"intent":[],"observe":[],"reason":[],"trace":[]}}}</pre><p>is the call:</p><pre class="nolinks" aria-busy="false"><code class="hljs js">tcxp.<span class="hljs-property">foo</span>.<span class="hljs-title function_">bar</span>({ <span class="hljs-attr">params</span>: [{ <span class="hljs-attr">key</span>: <span class="hljs-string">"x"</span>, <span class="hljs-attr">value</span>: <span class="hljs-number">1</span> }], <span class="hljs-attr">state</span>: { <span class="hljs-attr">context</span>: { … } } })</code></pre><p>The same address without the <code>@</code> is that call written down but not made. Because a list's order is part of the object, swapping two entries in <code>params</code> makes a different call.</p></div><div class="rule" id="rule-20"><p class="rule-addr"><a href="#rule-20"><code>tcxp://tcxp.org/rule/20</code></a></p><p>A tcxp address is written and read in plain form. It is percent-encoded only where a URI is required, which gives its URI form. The <code>@</code> at the start of the path's second segment is syntax, like <code>/</code> and <code>?</code>: it marks a call and is never part of a name.</p><p>The governor reads the plain form, so virtual and local addresses are never percent-encoded, and neither is any address written in a document. An address is percent-encoded only where a URI is required. Its <code>/</code>, <code>@</code> and <code>?</code> stay as they are, because they are syntax. Each pair below shows the plain form, then the same address as a URI.</p><p>Nothing changes, because there is no name character or JSON to encode:</p><pre class="nohighlight address nolinks">tcxp://test.com/@hello
+tcxp://test.com/@hello</pre><p>The space in the name is encoded; the <code>@</code> is not:</p><pre class="nohighlight address nolinks">tcxp://test.com/My Notes/@hello
+tcxp://test.com/My%20Notes/@hello</pre><p>The JSON is encoded; the <code>@</code> and the <code>?</code> are not:</p><pre class="nohighlight address nolinks">tcxp://test.com/@hello?{"params":[{"key":"name","value":"Ron Itelman"}],"state":{"context":{"decide":[],"intent":[],"observe":[],"reason":[],"trace":[]}}}
+tcxp://test.com/@hello?%7B%22params%22%3A%5B%7B%22key%22%3A%22name%22%2C%22value%22%3A%22Ron%20Itelman%22%7D%5D%2C%22state%22%3A%7B%22context%22%3A%7B%22decide%22%3A%5B%5D%2C%22intent%22%3A%5B%5D%2C%22observe%22%3A%5B%5D%2C%22reason%22%3A%5B%5D%2C%22trace%22%3A%5B%5D%7D%7D%7D</pre><p>Both are the call:</p><pre class="nolinks" aria-busy="false"><code class="hljs js"><span class="hljs-title function_">hello</span>({
+  <span class="hljs-attr">params</span>: [
+    { <span class="hljs-attr">key</span>: <span class="hljs-string">"name"</span>, <span class="hljs-attr">value</span>: <span class="hljs-string">"Ron Itelman"</span> }
+  ],
+  <span class="hljs-attr">state</span>: {
+    <span class="hljs-attr">context</span>: { <span class="hljs-attr">decide</span>: [], <span class="hljs-attr">intent</span>: [], <span class="hljs-attr">observe</span>: [], <span class="hljs-attr">reason</span>: [], <span class="hljs-attr">trace</span>: [] }
+  }
+})</code></pre><p>Because the <code>@</code> is syntax, no name in the path contains <code>@</code>.</p></div><div class="rule" id="rule-21"><p class="rule-addr"><a href="#rule-21"><code>tcxp://tcxp.org/rule/21</code></a></p><p><code>params</code> is an array of key-value pairs. Each entry is a JSON object with exactly two keys: <code>key</code>, a string, and <code>value</code>, any JSON value. The entries are the inputs, in order.</p><p>The same call in three forms: JavaScript, the plain address, and the address as a URI.</p><p>JavaScript:</p><pre class="nolinks" aria-busy="false"><code class="hljs js"><span class="hljs-title function_">hello</span>({
+  <span class="hljs-attr">params</span>: [
+    { <span class="hljs-attr">key</span>: <span class="hljs-string">"phrase-you-expect"</span>, <span class="hljs-attr">value</span>: <span class="hljs-string">"world"</span> },
+    { <span class="hljs-attr">key</span>: <span class="hljs-string">"count"</span>, <span class="hljs-attr">value</span>: <span class="hljs-number">2</span> }
+  ],
+  <span class="hljs-attr">state</span>: {
+    <span class="hljs-attr">context</span>: { <span class="hljs-attr">decide</span>: [], <span class="hljs-attr">intent</span>: [], <span class="hljs-attr">observe</span>: [], <span class="hljs-attr">reason</span>: [], <span class="hljs-attr">trace</span>: [] }
+  }
+})</code></pre><p>Plain:</p><pre class="nohighlight address nolinks">tcxp://test.com/@hello?{"params":[{"key":"phrase-you-expect","value":"world"},{"key":"count","value":2}],"state":{"context":{"decide":[],"intent":[],"observe":[],"reason":[],"trace":[]}}}</pre><p>URI:</p><pre class="nohighlight address nolinks">tcxp://test.com/@hello?%7B%22params%22%3A%5B%7B%22key%22%3A%22phrase-you-expect%22%2C%22value%22%3A%22world%22%7D%2C%7B%22key%22%3A%22count%22%2C%22value%22%3A2%7D%5D%2C%22state%22%3A%7B%22context%22%3A%7B%22decide%22%3A%5B%5D%2C%22intent%22%3A%5B%5D%2C%22observe%22%3A%5B%5D%2C%22reason%22%3A%5B%5D%2C%22trace%22%3A%5B%5D%7D%7D%7D</pre><p><code>"world"</code> is a string and <code>2</code> is a number: each <code>value</code> keeps its JSON type.</p></div><div class="rule" id="rule-22"><p class="rule-addr"><a href="#rule-22"><code>tcxp://tcxp.org/rule/22</code></a></p><p>Each row in <code>meaning</code> refers to a semantic or pragmatic reference for the anchor, readable by a person either where it points or in the address itself.</p><p>Any tcxp address may be used, and how the addresses are named and organized is up to whoever writes them. For example, a sensor observes a temperature column, but the numbers alone do not say whether they are Celsius or Fahrenheit. A row in the spike's <code>meaning</code> facet says so:</p><pre class="nolinks" aria-busy="false"><code class="hljs json"><span class="hljs-punctuation">{</span><span class="hljs-attr">"data"</span><span class="hljs-punctuation">:</span><span class="hljs-punctuation">[</span><span class="hljs-punctuation">{</span><span class="hljs-attr">"fingerprint"</span><span class="hljs-punctuation">:</span><span class="hljs-punctuation">{</span><span class="hljs-attr">"tcxp://tcxp.org/fingerprint/when"</span><span class="hljs-punctuation">:</span><span class="hljs-string">"2026-10-11T13:06:04.217Z"</span><span class="hljs-punctuation">}</span><span class="hljs-punctuation">,</span><span class="hljs-attr">"ref"</span><span class="hljs-punctuation">:</span><span class="hljs-string">"tcxp://example.com/sensors/thermo-1/temperature"</span><span class="hljs-punctuation">}</span><span class="hljs-punctuation">]</span><span class="hljs-punctuation">,</span><span class="hljs-attr">"ground"</span><span class="hljs-punctuation">:</span><span class="hljs-punctuation">[</span><span class="hljs-punctuation">]</span><span class="hljs-punctuation">,</span><span class="hljs-attr">"meaning"</span><span class="hljs-punctuation">:</span><span class="hljs-punctuation">[</span><span class="hljs-punctuation">{</span><span class="hljs-attr">"fingerprint"</span><span class="hljs-punctuation">:</span><span class="hljs-punctuation">{</span><span class="hljs-attr">"tcxp://tcxp.org/fingerprint/when"</span><span class="hljs-punctuation">:</span><span class="hljs-string">"2026-10-11T13:06:04.217Z"</span><span class="hljs-punctuation">}</span><span class="hljs-punctuation">,</span><span class="hljs-attr">"ref"</span><span class="hljs-punctuation">:</span><span class="hljs-string">"tcxp://example.com/units/celsius"</span><span class="hljs-punctuation">}</span><span class="hljs-punctuation">]</span><span class="hljs-punctuation">,</span><span class="hljs-attr">"structure"</span><span class="hljs-punctuation">:</span><span class="hljs-punctuation">[</span><span class="hljs-punctuation">]</span><span class="hljs-punctuation">}</span></code></pre><p>Without that row, a reader would have to guess the unit.</p></div><div class="rule" id="rule-23"><p class="rule-addr"><a href="#rule-23"><code>tcxp://tcxp.org/rule/23</code></a></p><p>Each row in <code>structure</code> refers to a schema the anchor conforms to, such as a regular expression or a JSON Schema.</p><p>A schema says what shape the anchor has, so a reader can check it before relying on it. Each rule of the shape can be its own row. For example, a row that points to a JSON Schema the anchor validates against:</p><pre class="nolinks" aria-busy="false"><code class="hljs js">{<span class="hljs-string">"fingerprint"</span>:{<span class="hljs-string">"tcxp://tcxp.org/fingerprint/when"</span>:<span class="hljs-string">"2026-10-11T13:06:04.217Z"</span>},<span class="hljs-string">"ref"</span>:<span class="hljs-string">"tcxp://example.com/schemas/temperature"</span>}</code></pre></div><div class="rule" id="rule-24"><p class="rule-addr"><a href="#rule-24"><code>tcxp://tcxp.org/rule/24</code></a></p><p>Each row in <code>ground</code> refers to a real-world condition that grounds the data, meaning and structure to a decision: something a reader must account for before acting on the anchor.</p><p>The data, its meaning and its structure can all be correct and still lead to a wrong decision if the reader's situation differs. For example, a sea captain reads the data to make a decision, and a row in <code>ground</code> says that the freezing temperature of this ocean differs:</p><pre class="nolinks" aria-busy="false"><code class="hljs js">{<span class="hljs-string">"fingerprint"</span>:{<span class="hljs-string">"tcxp://tcxp.org/fingerprint/when"</span>:<span class="hljs-string">"2026-10-11T13:06:04.217Z"</span>},<span class="hljs-string">"ref"</span>:<span class="hljs-string">"tcxp://example.com/conditions/arctic-freezing-point"</span>}</code></pre></div><div class="rule" id="rule-25"><p class="rule-addr"><a href="#rule-25"><code>tcxp://tcxp.org/rule/25</code></a></p><p>A governor's verdict is exactly one of <code>ACT</code>, <code>ASK</code> or <code>HALT</code>. <code>HALT</code> is absorbing: once it is reached, nothing else in the same evaluation changes it to <code>ASK</code> or <code>ACT</code>.</p><p><code>ACT</code> means the context is enough to proceed. <code>ASK</code> means something needed is missing or unresolved, so the governor asks for it before proceeding. <code>HALT</code> means proceeding is not allowed. The verdict decides only what happens next. It is separate from the outcome of the work itself, such as approve or reject. For example, before a request is sent to a model, a governor returns <code>ASK</code> while the user has not chosen which version of a file to use, and <code>ACT</code> once they have.</p></div></section><section id="media-type-registration" class="appendix"><div class="header-wrapper"><h2 id="a-media-type-registration"><bdi class="secno">A. </bdi>Media type registration</h2><a class="self-link" href="#media-type-registration" aria-label="Permalink for Appendix A."></a></div><p>This registration is for community review and will be submitted to the IESG for review, approval, and registration with IANA.</p><table class="data"><thead><tr><th>Field</th><th>Value</th></tr></thead><tbody><tr><td>Type name</td><td><code>text</code></td></tr><tr><td>Subtype name</td><td><code>tcxp</code></td></tr><tr><td>Required parameters</td><td>None</td></tr><tr><td>Optional parameters</td><td>None. A tcxp document is always encoded in UTF-8 [<cite><a class="bibref" data-link-type="biblio" href="#bib-rfc3629" title="UTF-8, a transformation format of ISO 10646">RFC3629</a></cite>].</td></tr><tr><td>Encoding considerations</td><td>8bit</td></tr><tr><td>Security considerations</td><td>Reading, parsing or displaying a tcxp document never executes it and never fetches any address it contains. Addresses in a document can carry data and context, so a document should be treated like any URI that may contain sensitive data.</td></tr><tr><td>Interoperability considerations</td><td>Addresses in a document are written in plain form, and the JSON in them is in canonical form [<cite><a class="bibref" data-link-type="biblio" href="#bib-rfc8785" title="JSON Canonicalization Scheme (JCS)">RFC8785</a></cite>], so the same address has the same bytes in every document.</td></tr><tr><td>Published specification</td><td>This document</td></tr><tr><td>Applications that use this media type</td><td>Software that implements the Typed Context Protocol.</td></tr><tr><td>Fragment identifier considerations</td><td>None defined</td></tr><tr><td>Deprecated alias names</td><td>None</td></tr><tr><td>Magic number(s)</td><td>None</td></tr><tr><td>File extension(s)</td><td><code>.tcxp</code></td></tr><tr><td>Macintosh file type code(s)</td><td>None</td></tr><tr><td>Person and email address to contact</td><td>Ron Itelman, ron@ronitelman.com</td></tr><tr><td>Intended usage</td><td>COMMON</td></tr><tr><td>Restrictions on usage</td><td>None</td></tr><tr><td>Author</td><td>W3C Typed Context Protocol Community Group</td></tr><tr><td>Change controller</td><td>W3C</td></tr></tbody></table></section><section id="rule-index" class="appendix informative"><div class="header-wrapper"><h2 id="b-rule-index"><bdi class="secno">B. </bdi>Rule index</h2><a class="self-link" href="#rule-index" aria-label="Permalink for Appendix B."></a></div><p><em>This section is non-normative.</em></p><table class="data"><caption>Every rule by its tcxp address</caption><thead><tr><th>Address</th><th>Section</th></tr></thead><tbody><tr><td><a href="#rule-0"><code>tcxp://tcxp.org/rule/0</code></a></td><td><a href="#rules" class="sec-ref"><bdi class="secno">2. </bdi>Rules</a></td></tr><tr><td><a href="#rule-1"><code>tcxp://tcxp.org/rule/1</code></a></td><td><a href="#rules" class="sec-ref"><bdi class="secno">2. </bdi>Rules</a></td></tr><tr><td><a href="#rule-2"><code>tcxp://tcxp.org/rule/2</code></a></td><td><a href="#rules" class="sec-ref"><bdi class="secno">2. </bdi>Rules</a></td></tr><tr><td><a href="#rule-3"><code>tcxp://tcxp.org/rule/3</code></a></td><td><a href="#rules" class="sec-ref"><bdi class="secno">2. </bdi>Rules</a></td></tr><tr><td><a href="#rule-4"><code>tcxp://tcxp.org/rule/4</code></a></td><td><a href="#rules" class="sec-ref"><bdi class="secno">2. </bdi>Rules</a></td></tr><tr><td><a href="#rule-5"><code>tcxp://tcxp.org/rule/5</code></a></td><td><a href="#rules" class="sec-ref"><bdi class="secno">2. </bdi>Rules</a></td></tr><tr><td><a href="#rule-6"><code>tcxp://tcxp.org/rule/6</code></a></td><td><a href="#rules" class="sec-ref"><bdi class="secno">2. </bdi>Rules</a></td></tr><tr><td><a href="#rule-7"><code>tcxp://tcxp.org/rule/7</code></a></td><td><a href="#rules" class="sec-ref"><bdi class="secno">2. </bdi>Rules</a></td></tr><tr><td><a href="#rule-8"><code>tcxp://tcxp.org/rule/8</code></a></td><td><a href="#rules" class="sec-ref"><bdi class="secno">2. </bdi>Rules</a></td></tr><tr><td><a href="#rule-9"><code>tcxp://tcxp.org/rule/9</code></a></td><td><a href="#rules" class="sec-ref"><bdi class="secno">2. </bdi>Rules</a></td></tr><tr><td><a href="#rule-10"><code>tcxp://tcxp.org/rule/10</code></a></td><td><a href="#rules" class="sec-ref"><bdi class="secno">2. </bdi>Rules</a></td></tr><tr><td><a href="#rule-11"><code>tcxp://tcxp.org/rule/11</code></a></td><td><a href="#rules" class="sec-ref"><bdi class="secno">2. </bdi>Rules</a></td></tr><tr><td><a href="#rule-12"><code>tcxp://tcxp.org/rule/12</code></a></td><td><a href="#rules" class="sec-ref"><bdi class="secno">2. </bdi>Rules</a></td></tr><tr><td><a href="#rule-13"><code>tcxp://tcxp.org/rule/13</code></a></td><td><a href="#rules" class="sec-ref"><bdi class="secno">2. </bdi>Rules</a></td></tr><tr><td><a href="#rule-14"><code>tcxp://tcxp.org/rule/14</code></a></td><td><a href="#rules" class="sec-ref"><bdi class="secno">2. </bdi>Rules</a></td></tr><tr><td><a href="#rule-15"><code>tcxp://tcxp.org/rule/15</code></a></td><td><a href="#rules" class="sec-ref"><bdi class="secno">2. </bdi>Rules</a></td></tr><tr><td><a href="#rule-16"><code>tcxp://tcxp.org/rule/16</code></a></td><td><a href="#rules" class="sec-ref"><bdi class="secno">2. </bdi>Rules</a></td></tr><tr><td><a href="#rule-17"><code>tcxp://tcxp.org/rule/17</code></a></td><td><a href="#rules" class="sec-ref"><bdi class="secno">2. </bdi>Rules</a></td></tr><tr><td><a href="#rule-18"><code>tcxp://tcxp.org/rule/18</code></a></td><td><a href="#rules" class="sec-ref"><bdi class="secno">2. </bdi>Rules</a></td></tr><tr><td><a href="#rule-19"><code>tcxp://tcxp.org/rule/19</code></a></td><td><a href="#rules" class="sec-ref"><bdi class="secno">2. </bdi>Rules</a></td></tr><tr><td><a href="#rule-20"><code>tcxp://tcxp.org/rule/20</code></a></td><td><a href="#rules" class="sec-ref"><bdi class="secno">2. </bdi>Rules</a></td></tr><tr><td><a href="#rule-21"><code>tcxp://tcxp.org/rule/21</code></a></td><td><a href="#rules" class="sec-ref"><bdi class="secno">2. </bdi>Rules</a></td></tr><tr><td><a href="#rule-22"><code>tcxp://tcxp.org/rule/22</code></a></td><td><a href="#rules" class="sec-ref"><bdi class="secno">2. </bdi>Rules</a></td></tr><tr><td><a href="#rule-23"><code>tcxp://tcxp.org/rule/23</code></a></td><td><a href="#rules" class="sec-ref"><bdi class="secno">2. </bdi>Rules</a></td></tr><tr><td><a href="#rule-24"><code>tcxp://tcxp.org/rule/24</code></a></td><td><a href="#rules" class="sec-ref"><bdi class="secno">2. </bdi>Rules</a></td></tr><tr><td><a href="#rule-25"><code>tcxp://tcxp.org/rule/25</code></a></td><td><a href="#rules" class="sec-ref"><bdi class="secno">2. </bdi>Rules</a></td></tr></tbody></table></section><section id="index" class="appendix"><div class="header-wrapper"><h2 id="c-index"><bdi class="secno">C. </bdi>Index</h2><a class="self-link" href="#index" aria-label="Permalink for Appendix C."></a></div><section id="index-defined-here"><div class="header-wrapper"><h3 id="c-1-terms-defined-by-this-specification"><bdi class="secno">C.1 </bdi>Terms defined by this specification</h3><a class="self-link" href="#index-defined-here" aria-label="Permalink for Appendix C.1"></a></div>
+    
+    <ul class="index">
+    
+  </ul>
+  </section><section id="index-defined-elsewhere"><div class="header-wrapper"><h3 id="c-2-terms-defined-by-reference"><bdi class="secno">C.2 </bdi>Terms defined by reference</h3><a class="self-link" href="#index-defined-elsewhere" aria-label="Permalink for Appendix C.2"></a></div>
+    
+    <ul class="index">
+    <li>
+        [<cite><a class="bibref" data-link-type="biblio" href="#bib-rfc3986">RFC3986</a></cite>] defines the following:
+        <ul>
+          <li>
+    <span class="index-term" data-href="https://www.rfc-editor.org/info/rfc3986/#section-2.5" id="index-term-rfc-3986-section-2-5" tabindex="0" aria-haspopup="dialog">RFC 3986, section 2.5</span>
+  </li><li>
+    <span class="index-term" data-href="https://www.rfc-editor.org/info/rfc3986/#section-3" id="index-term-rfc-3986-section-3" tabindex="0" aria-haspopup="dialog">RFC 3986, section 3</span>
+  </li><li>
+    <span class="index-term" data-href="https://www.rfc-editor.org/info/rfc3986/#section-6.2.2" id="index-term-section-6-2-2" tabindex="0" aria-haspopup="dialog">section 6.2.2</span>
+  </li>
+        </ul>
+      </li>
+  </ul>
+  </section></section><section id="references" class="appendix"><div class="header-wrapper"><h2 id="d-references"><bdi class="secno">D. </bdi>References</h2><a class="self-link" href="#references" aria-label="Permalink for Appendix D."></a></div><section id="normative-references"><div class="header-wrapper"><h3 id="d-1-normative-references"><bdi class="secno">D.1 </bdi>Normative references</h3><a class="self-link" href="#normative-references" aria-label="Permalink for Appendix D.1"></a></div>
+    
+    <dl class="bibliography"><dt id="bib-rfc10008">[RFC10008]</dt><dd>
+      <a href="https://www.rfc-editor.org/rfc/rfc10008"><cite>The HTTP QUERY Method</cite></a>.  IETF. Proposed Standard. URL: <a href="https://www.rfc-editor.org/rfc/rfc10008">https://www.rfc-editor.org/rfc/rfc10008</a>
+    </dd><dt id="bib-rfc3339">[RFC3339]</dt><dd>
+      <a href="https://www.rfc-editor.org/info/rfc3339/"><cite>Date and Time on the Internet: Timestamps</cite></a>. G. Klyne; C. Newman.  IETF. July 2002. Proposed Standard. URL: <a href="https://www.rfc-editor.org/info/rfc3339/">https://www.rfc-editor.org/info/rfc3339/</a>
+    </dd><dt id="bib-rfc3629">[RFC3629]</dt><dd>
+      <a href="https://www.rfc-editor.org/info/rfc3629/"><cite>UTF-8, a transformation format of ISO 10646</cite></a>. F. Yergeau.  IETF. November 2003. Internet Standard. URL: <a href="https://www.rfc-editor.org/info/rfc3629/">https://www.rfc-editor.org/info/rfc3629/</a>
+    </dd><dt id="bib-rfc3986">[RFC3986]</dt><dd>
+      <a href="https://www.rfc-editor.org/info/rfc3986/"><cite>Uniform Resource Identifier (URI): Generic Syntax</cite></a>. T. Berners-Lee; R. Fielding; L. Masinter.  IETF. January 2005. Internet Standard. URL: <a href="https://www.rfc-editor.org/info/rfc3986/">https://www.rfc-editor.org/info/rfc3986/</a>
+    </dd><dt id="bib-rfc8089">[RFC8089]</dt><dd>
+      <a href="https://www.rfc-editor.org/info/rfc8089/"><cite>The "file" URI Scheme</cite></a>. M. Kerwin.  IETF. February 2017. Proposed Standard. URL: <a href="https://www.rfc-editor.org/info/rfc8089/">https://www.rfc-editor.org/info/rfc8089/</a>
+    </dd><dt id="bib-rfc8259">[RFC8259]</dt><dd>
+      <a href="https://www.rfc-editor.org/info/rfc8259/"><cite>The JavaScript Object Notation (JSON) Data Interchange Format</cite></a>. T. Bray, Ed. IETF. December 2017. Internet Standard. URL: <a href="https://www.rfc-editor.org/info/rfc8259/">https://www.rfc-editor.org/info/rfc8259/</a>
+    </dd><dt id="bib-rfc8785">[RFC8785]</dt><dd>
+      <a href="https://www.rfc-editor.org/info/rfc8785/"><cite>JSON Canonicalization Scheme (JCS)</cite></a>. A. Rundgren; B. Jordan; S. Erdtman.  IETF. June 2020. Informational. URL: <a href="https://www.rfc-editor.org/info/rfc8785/">https://www.rfc-editor.org/info/rfc8785/</a>
+    </dd></dl>
+  </section></section><p role="navigation" id="back-to-top">
+    <a href="#title"><abbr title="Back to Top">↑</abbr></a>
+  </p><div class="dfn-panel" hidden="" role="dialog" aria-modal="true" id="dfn-panel-for-index-term-rfc-3986-section-2-5" aria-label="Links in this document to definition: RFC 3986, section 2.5">
+      <span class="caret"></span>
+      <div>
+        <a class="self-link" href="https://www.rfc-editor.org/info/rfc3986/#section-2.5" aria-label="Permalink for definition: RFC 3986, section 2.5. Activate to close this dialog.">Permalink</a>
+         
+        
+      </div>
+      <p><b>Referenced in:</b></p>
+      <ul>
+    <li>
+      <a href="#ref-for-index-term-rfc-3986-section-2-5-1" title="§ 2. Rules">§ 2. Rules</a> <a href="#ref-for-index-term-rfc-3986-section-2-5-2" title="Reference 2">(2)</a> 
+    </li>
+  </ul>
+    </div><div class="dfn-panel" hidden="" role="dialog" aria-modal="true" id="dfn-panel-for-index-term-rfc-3986-section-3" aria-label="Links in this document to definition: RFC 3986, section 3">
+      <span class="caret"></span>
+      <div>
+        <a class="self-link" href="https://www.rfc-editor.org/info/rfc3986/#section-3" aria-label="Permalink for definition: RFC 3986, section 3. Activate to close this dialog.">Permalink</a>
+         
+        
+      </div>
+      <p><b>Referenced in:</b></p>
+      <ul>
+    <li>
+      <a href="#ref-for-index-term-rfc-3986-section-3-1" title="§ 2. Rules">§ 2. Rules</a> 
+    </li>
+  </ul>
+    </div><div class="dfn-panel" hidden="" role="dialog" aria-modal="true" id="dfn-panel-for-index-term-section-6-2-2" aria-label="Links in this document to definition: section 6.2.2">
+      <span class="caret"></span>
+      <div>
+        <a class="self-link" href="https://www.rfc-editor.org/info/rfc3986/#section-6.2.2" aria-label="Permalink for definition: section 6.2.2. Activate to close this dialog.">Permalink</a>
+         
+        
+      </div>
+      <p><b>Referenced in:</b></p>
+      <ul>
+    <li>
+      <a href="#ref-for-index-term-section-6-2-2-1" title="§ 2. Rules">§ 2. Rules</a> 
+    </li>
+  </ul>
+    </div><script id="respec-highlight-vars">(() => {
+// @ts-check
+
+if (document.respec) {
+  document.respec.ready.then(setupVarHighlighter);
+} else {
+  setupVarHighlighter();
+}
+
+function setupVarHighlighter() {
+  document
+    .querySelectorAll("var")
+    .forEach(varElem => varElem.addEventListener("click", highlightListener));
+}
+
+/**
+ * @param {MouseEvent} ev
+ */
+function highlightListener(ev) {
+  ev.stopPropagation();
+  const varElem = /** @type {HTMLElement} */ (ev.target);
+  const hightligtedElems = highlightVars(varElem);
+  const resetListener = () => {
+    const hlColor = getHighlightColor(varElem);
+    hightligtedElems.forEach(el => removeHighlight(el, hlColor));
+    [...HL_COLORS.keys()].forEach(key => HL_COLORS.set(key, true));
+  };
+  if (hightligtedElems.length) {
+    document.body.addEventListener("click", resetListener, { once: true });
+  }
+}
+
+// availability of highlight colors. colors from var.css
+const HL_COLORS = new Map([
+  ["respec-hl-c1", true],
+  ["respec-hl-c2", true],
+  ["respec-hl-c3", true],
+  ["respec-hl-c4", true],
+  ["respec-hl-c5", true],
+  ["respec-hl-c6", true],
+  ["respec-hl-c7", true],
+]);
+
+/**
+ * @param {HTMLElement} target
+ */
+function getHighlightColor(target) {
+  // return current colors if applicable
+  const { value } = target.classList;
+  const re = /respec-hl-\w+/;
+  const activeClass = re.test(value) && value.match(re);
+  if (activeClass) return activeClass[0];
+
+  // first color preference
+  if (HL_COLORS.get("respec-hl-c1") === true) return "respec-hl-c1";
+
+  // otherwise get some other available color
+  return [...HL_COLORS.keys()].find(c => HL_COLORS.get(c)) || "respec-hl-c1";
+}
+
+/**
+ * @param {HTMLElement} varElem
+ */
+function highlightVars(varElem) {
+  const textContent = norm(varElem.textContent);
+  const parent = /** @type {HTMLElement} */ (
+    varElem.closest(".algorithm, section")
+  );
+  if (!parent) return [];
+  const highlightColor = getHighlightColor(varElem);
+
+  const varsToHighlight = [...parent.querySelectorAll("var")].filter(
+    el =>
+      norm(el.textContent) === textContent &&
+      el.closest(".algorithm, section") === parent
+  );
+
+  // update availability of highlight color
+  const colorStatus = varsToHighlight[0].classList.contains("respec-hl");
+  HL_COLORS.set(highlightColor, colorStatus);
+
+  // highlight vars
+  if (colorStatus) {
+    varsToHighlight.forEach(el => removeHighlight(el, highlightColor));
+    return [];
+  } else {
+    varsToHighlight.forEach(el => addHighlight(el, highlightColor));
+  }
+  return varsToHighlight;
+}
+
+/**
+ * @param {HTMLElement} el
+ * @param {string} highlightColor
+ */
+function removeHighlight(el, highlightColor) {
+  el.classList.remove("respec-hl", highlightColor);
+  // clean up empty class attributes so they don't come in export
+  if (!el.classList.length) el.removeAttribute("class");
+}
+
+/**
+ * @param {HTMLElement} elem
+ * @param {string} highlightColor
+ */
+function addHighlight(elem, highlightColor) {
+  elem.classList.add("respec-hl", highlightColor);
+}
+
+/**
+ * Same as `norm` from src/core/utils, but our build process doesn't allow
+ * imports in runtime scripts, so duplicated here.
+ * @param {string} str
+ */
+function norm(str) {
+  return str.trim().replace(/\s+/g, " ");
+}
+})()</script><script id="respec-dfn-panel">(() => {
+// @ts-check
+if (document.respec) {
+  document.respec.ready.then(setupPanel);
+} else {
+  setupPanel();
+}
+
+function setupPanel() {
+  const listener = panelListener();
+  document.body.addEventListener("keydown", listener);
+  document.body.addEventListener("click", listener);
+}
+
+function panelListener() {
+  /** @type {HTMLElement | null} */
+  let panel = null;
+  /**
+   * @param {KeyboardEvent|MouseEvent} event
+   */
+  return event => {
+    const { target, type } = event;
+
+    if (!(target instanceof HTMLElement)) return;
+
+    // For keys, we only care about Enter key to activate the panel
+    // otherwise it's activated via a click.
+    if (
+      type === "keydown" &&
+      /** @type {KeyboardEvent} */ (event).key !== "Enter"
+    )
+      return;
+
+    const action = deriveAction(event);
+
+    switch (action) {
+      case "show": {
+        hidePanel(panel);
+        /** @type {HTMLElement | null} */
+        const dfn = target.closest("dfn, .index-term");
+        if (!dfn?.id) break;
+        panel = document.getElementById(`dfn-panel-for-${dfn.id}`);
+        if (!panel) break;
+        const coords = deriveCoordinates(
+          /** @type {MouseEvent|KeyboardEvent} */ (event)
+        );
+        displayPanel(dfn, panel, coords);
+        break;
+      }
+      case "dock": {
+        if (panel) {
+          panel.style.left = "";
+          panel.style.top = "";
+          panel.classList.add("docked");
+        }
+        break;
+      }
+      case "hide": {
+        hidePanel(panel);
+        panel = null;
+        break;
+      }
+    }
+  };
+}
+
+/**
+ * @param {MouseEvent|KeyboardEvent} event
+ */
+function deriveCoordinates(event) {
+  const target = /** @type HTMLElement */ (event.target);
+
+  // We prevent synthetic AT clicks from putting
+  // the dialog in a weird place. The AT events sometimes
+  // lack coordinates, so they have clientX/Y = 0
+  const rect = target.getBoundingClientRect();
+  if (
+    event instanceof MouseEvent &&
+    event.clientX >= rect.left &&
+    event.clientY >= rect.top
+  ) {
+    // The event probably happened inside the bounding rect...
+    return { x: event.clientX, y: event.clientY };
+  }
+
+  // Offset to the middle of the element
+  const x = rect.x + rect.width / 2;
+  // Placed at the bottom of the element
+  const y = rect.y + rect.height;
+  return { x, y };
+}
+
+/**
+ * @param {Event} event
+ */
+function deriveAction(event) {
+  const target = /** @type {HTMLElement} */ (event.target);
+  const hitALink = !!target.closest("a");
+  if (target.closest("dfn:not([data-cite]), .index-term")) {
+    return hitALink ? "none" : "show";
+  }
+  if (target.closest(".dfn-panel")) {
+    if (hitALink) {
+      return target.classList.contains("self-link") ? "hide" : "dock";
+    }
+
+    const panel = /** @type {HTMLElement} */ (target.closest(".dfn-panel"));
+    return panel.classList.contains("docked") ? "hide" : "none";
+  }
+  if (document.querySelector(".dfn-panel:not([hidden])")) {
+    return "hide";
+  }
+  return "none";
+}
+
+/**
+ * @param {HTMLElement} dfn
+ * @param {HTMLElement} panel
+ * @param {{ x: number, y: number }} clickPosition
+ */
+function displayPanel(dfn, panel, { x, y }) {
+  panel.hidden = false;
+  // distance (px) between edge of panel and the pointing triangle (caret)
+  const MARGIN = 20;
+
+  const dfnRects = dfn.getClientRects();
+  // Find the `top` offset when the `dfn` can be spread across multiple lines
+  let closestTop = 0;
+  let minDiff = Infinity;
+  for (const rect of dfnRects) {
+    const { top, bottom } = rect;
+    const diffFromClickY = Math.abs((top + bottom) / 2 - y);
+    if (diffFromClickY < minDiff) {
+      minDiff = diffFromClickY;
+      closestTop = top;
+    }
+  }
+
+  const top = window.scrollY + closestTop + dfnRects[0].height;
+  const left = x - MARGIN;
+  panel.style.left = `${left}px`;
+  panel.style.top = `${top}px`;
+
+  // Find if the panel is flowing out of the window
+  const panelRect = panel.getBoundingClientRect();
+  const SCREEN_WIDTH = Math.min(window.innerWidth, window.screen.width);
+  if (panelRect.right > SCREEN_WIDTH) {
+    const newLeft = Math.max(MARGIN, x + MARGIN - panelRect.width);
+    const newCaretOffset = left - newLeft;
+    panel.style.left = `${newLeft}px`;
+    /** @type {HTMLElement | null} */
+    const caret = panel.querySelector(".caret");
+    if (caret) caret.style.left = `${newCaretOffset}px`;
+  }
+
+  // As it's a dialog, we trap focus.
+  // TODO: when <dialog> becomes a implemented, we should really
+  // use that.
+  trapFocus(panel, dfn);
+}
+
+/**
+ * @param {HTMLElement} panel
+ * @param {HTMLElement} dfn
+ * @returns
+ */
+function trapFocus(panel, dfn) {
+  /** @type NodeListOf<HTMLAnchorElement> elements */
+  const anchors = panel.querySelectorAll("a[href]");
+  // No need to trap focus
+  if (!anchors.length) return;
+
+  // Move focus to first anchor element
+  const first = anchors.item(0);
+  first.focus();
+
+  const trapListener = createTrapListener(anchors, panel, dfn);
+  panel.addEventListener("keydown", trapListener);
+
+  // Hiding the panel releases the trap
+  const mo = new MutationObserver(records => {
+    const [record] = records;
+    const target = /** @type HTMLElement */ (record.target);
+    if (target.hidden) {
+      panel.removeEventListener("keydown", trapListener);
+      mo.disconnect();
+    }
+  });
+  mo.observe(panel, { attributes: true, attributeFilter: ["hidden"] });
+}
+
+/**
+ *
+ * @param {NodeListOf<HTMLAnchorElement>} anchors
+ * @param {HTMLElement} panel
+ * @param {HTMLElement} dfn
+ * @returns
+ */
+function createTrapListener(anchors, panel, dfn) {
+  const lastIndex = anchors.length - 1;
+  let currentIndex = 0;
+  /**
+   * @param {KeyboardEvent} event
+   */
+  return event => {
+    switch (event.key) {
+      // Hitting "Tab" traps us in a nice loop around elements.
+      case "Tab": {
+        event.preventDefault();
+        currentIndex += event.shiftKey ? -1 : +1;
+        if (currentIndex < 0) {
+          currentIndex = lastIndex;
+        } else if (currentIndex > lastIndex) {
+          currentIndex = 0;
+        }
+        anchors.item(currentIndex).focus();
+        break;
+      }
+
+      // Hitting "Enter" on an anchor releases the trap.
+      case "Enter":
+        hidePanel(panel);
+        break;
+
+      // Hitting "Escape" returns focus to dfn.
+      case "Escape":
+        hidePanel(panel);
+        dfn.focus();
+        return;
+    }
+  };
+}
+
+/** @param {HTMLElement | null} panel */
+function hidePanel(panel) {
+  if (!panel) return;
+  panel.hidden = true;
+  panel.classList.remove("docked");
+}
+})()</script><script src="https://www.w3.org/scripts/TR/2021/fixup.js"></script></body></html>
