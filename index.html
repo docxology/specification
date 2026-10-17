@@ -1,0 +1,658 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="color-scheme" content="light" />
+    <title>Typed Context Protocol (tcxp)</title>
+    <style>
+      .rule {
+        margin: 1.5em 0;
+      }
+      .rule-addr {
+        margin: 0 0 0.25em;
+        font-size: 0.9em;
+      }
+      .rule-addr a {
+        text-decoration: none;
+      }
+      pre.address {
+        white-space: pre-wrap;
+        overflow-wrap: anywhere;
+      }
+      .render-error {
+        padding: 1em;
+        border: 2px solid #c00;
+        border-radius: 4px;
+      }
+    </style>
+
+    <!--
+      1. DATA
+      The rules are loaded from /data/rules.json, the same file /web/rules uses.
+      It must be an object with a "rules" array; each rule has
+      id, categories, rule, details and references.
+      To render other data instead, define `const data = {...};` in a script here.
+    -->
+    <script class="remove">
+const data = {
+  "rules": [
+    {
+      "id": 0,
+      "categories": [
+        "Verified",
+        "Unpublished",
+        "Ground",
+        "Document",
+        "Protocol"
+      ],
+      "rule": "A tcxp address is `tcxp:` followed by a ground and a path, then an optional `?\u003cjson>`. The ground is `/` (virtual), `//` (network) or `///` (local). An `@` at the start of the path's second segment makes the address a call.",
+      "details": "Every combination of space and call, shown up to the optional `?\u003cjson>`:\n\n```md\n| Address | Space | Ground | Call | Path |\n|---|---|---|---|---|\n| `tcxp:/example.com/fn/check-forecast` | virtual | `/` | no | `example.com/fn/check-forecast` |\n| `tcxp:/example.com/@fn/check-forecast` | virtual | `/` | yes | `example.com/@fn/check-forecast` |\n| `tcxp:/foo/bar` | virtual | `/` | no | `foo/bar` |\n| `tcxp:/foo/@bar` | virtual | `/` | yes | `foo/@bar` |\n| `tcxp://example.com/fn/check-forecast` | network | `//` | no | `example.com/fn/check-forecast` |\n| `tcxp://example.com/@fn/check-forecast` | network | `//` | yes | `example.com/@fn/check-forecast` |\n| `tcxp://foo/bar` | network | `//` | no | `foo/bar` |\n| `tcxp://foo/@bar` | network | `//` | yes | `foo/@bar` |\n| `tcxp:///example.com/fn/check-forecast` | local | `///` | no | `example.com/fn/check-forecast` |\n| `tcxp:///example.com/@fn/check-forecast` | local | `///` | yes | `example.com/@fn/check-forecast` |\n| `tcxp:///foo/bar` | local | `///` | no | `foo/bar` |\n| `tcxp:///foo/@bar` | local | `///` | yes | `foo/@bar` |\n```",
+      "references": []
+    },
+    {
+      "id": 1,
+      "categories": [
+        "Verified",
+        "Unpublished",
+        "Ground",
+        "Document",
+        "Protocol"
+      ],
+      "rule": "The Typed Context Protocol (tcxp) is a set of guarantees, enforced by logical rules, to observe, measure, and engineer interactions with Typed Context Objects over time.",
+      "details": "As a protocol, tcxp allows any design choice except breaking these rules. Breaking a rule breaks the protocol.",
+      "references": []
+    },
+    {
+      "id": 2,
+      "categories": [
+        "Verified",
+        "Unpublished",
+        "Ground",
+        "Document",
+        "Protocol"
+      ],
+      "rule": "Every tcxp address starts with `tcxp:`, in lowercase, with nothing before it.",
+      "details": "The scheme name tells any software that the rest of the string is a tcxp address. `tcxp` is [provisionally registered with IANA](https://www.iana.org/assignments/uri-schemes/prov/tcxp) (2026-10-09). Software reading an address should also accept an uppercase scheme, since URI schemes are case-insensitive, but addresses are always written in lowercase.",
+      "references": []
+    },
+    {
+      "id": 3,
+      "categories": ["Verified", "Unpublished"],
+      "rule": "Two slashes after `tcxp:` mean a network address. `tcxp://\u003cdomain>/…` belongs to whoever owns `\u003cdomain>`. Where tcxp is not supported natively, `tcxp://\u003cpath>` is sent to `https://\u003cpath>`.",
+      "details": "This works the same way as `https://`: whoever controls the domain controls every name under it, with no registration needed. The domain is written in lowercase, with no user name or port. The path is everything after the ground, and it is percent-encoded when sent. For example, `tcxp://example.com/@fn/check-forecast` belongs to `example.com`, and where tcxp is not supported natively it is sent to:\n`https://example.com/@fn/check-forecast`",
+      "references": []
+    },
+    {
+      "id": 4,
+      "categories": ["Verified", "Unpublished"],
+      "rule": "One slash after `tcxp:` means a virtual address: a name in memory. It has no host and is never fetched.",
+      "details": "A virtual address is written in plain form. It names a member of `tcxp`. For example, `tcxp:/notes/idea-1` names, in memory:\n```js\ntcxp.notes[\"idea-1\"]\n```",
+      "references": []
+    },
+    {
+      "id": 5,
+      "categories": ["Verified", "Unpublished"],
+      "rule": "A path is everything after the ground, up to the `?` if there is one: the boundary and the pointer, written as segments separated by `/`. Every segment has at least one character, and segments are case-sensitive.",
+      "details": "A path names a thing, for example `tcxp://example.com/forecasts/q3/v2`. Because every segment has at least one character, a path never contains `//`, never ends with `/`, and always has at least two segments: the boundary and the pointer. `Forecast` and `forecast` are different segments. The `@` that marks a call is syntax, not part of a segment's name. A segment is written in plain form, and is percent-encoded only where a URI is required. For example, plain and then as a URI:\n`tcxp://example.com/notes/My Notes`\n`tcxp://example.com/notes/My%20Notes`",
+      "references": []
+    },
+    {
+      "id": 6,
+      "categories": ["Verified", "Unpublished", "Ground", "Protocol"],
+      "rule": "A tcxp address is a URI ([RFC 3986](https://www.rfc-editor.org/rfc/rfc3986)), and the JSON in it is JSON ([RFC 8259](https://www.rfc-editor.org/rfc/rfc8259)). tcxp defers to both standards: no tcxp rule may allow what they forbid, and the plain form is shaped to conform to the URI.",
+      "details": "This rule governs every other rule. When a rule and either standard could differ, the standard decides and the rule is rewritten to conform.\n\nThe plain form is the URI with its percent-encoding decoded so it can be read. The two convert into each other exactly: encoding the plain form gives the URI, and decoding the URI gives the plain form, including the JSON after the `?`. Encoding follows [RFC 3986, section 2.5](https://www.rfc-editor.org/rfc/rfc3986#section-2.5): a name is encoded as UTF-8, and every octet outside the unreserved set is percent-encoded with uppercase hex digits ([section 6.2.2](https://www.rfc-editor.org/rfc/rfc3986#section-6.2.2)), so each plain form has exactly one URI. The `/`, `@` and `?` are syntax and are never encoded. For example, plain and then as a URI:\n`tcxp://example.com/notes/My Notes`\n`tcxp://example.com/notes/My%20Notes`",
+      "references": []
+    },
+
+    {
+      "id": 7,
+      "categories": ["Verified", "Unpublished"],
+      "rule": "The context is one JSON object with exactly five lists: `intent`, `observe`, `reason`, `decide` and `trace`. It is held by the `context` key of `state`, and `context` is the only key in `state`.",
+      "details": "All five lists are always present, even when empty, so a reader never has to guess whether a missing list means \"none\" or \"not sent.\" Reading the context never fetches any address in it. For example, a call with an empty context, in plain form:\n`tcxp://example.com/@fn/check-forecast?{\"params\":[{\"key\":\"quarter\",\"value\":\"q3\"}],\"state\":{\"context\":{\"decide\":[],\"intent\":[],\"observe\":[],\"reason\":[],\"trace\":[]}}}`",
+      "references": []
+    },
+    {
+      "id": 8,
+      "categories": ["Verified", "Unpublished"],
+      "rule": "A tcxp address has no length limit. A network address is sent to its domain with the HTTP QUERY method, so nothing is lost however long it is.",
+      "details": "The request target is the address up to the `?`, percent-encoded, at `https://`. The JSON after the `?` is the request body, with media type `application/json`. QUERY ([RFC 10008](https://www.rfc-editor.org/rfc/rfc10008)) is safe and idempotent like GET, but carries a body, so a long address is never cut off. For example, this plain address:\n`tcxp://example.com/@fn/check-forecast?{\"params\":[{\"key\":\"quarter\",\"value\":\"q3\"}],\"state\":{\"context\":{\"decide\":[],\"intent\":[],\"observe\":[],\"reason\":[],\"trace\":[]}}}`\nis sent as:\n```js\nfetch(\"https://example.com/@fn/check-forecast\", {\n  method: \"QUERY\",\n  headers: { \"Content-Type\": \"application/json\" },\n  body: '{\"params\":[{\"key\":\"quarter\",\"value\":\"q3\"}],\"state\":{\"context\":{\"decide\":[],\"intent\":[],\"observe\":[],\"reason\":[],\"trace\":[]}}}'\n})\n```",
+      "references": []
+    },
+    {
+      "id": 9,
+      "categories": ["Observe", "Verified", "Unpublished"],
+      "rule": "A spike has exactly four facets, as the keys `data`, `meaning`, `structure` and `ground`.",
+      "details": "A spike is the object an observation creates. Each facet is an array of objects, and each object in it is a row, so a facet can hold any number of entries. All four keys are always present, in lowercase with exactly these names, so any reader is guaranteed to find them. A spike with a missing key, an extra key, or a key spelled differently, such as `Meaning` or `Ground`, is rejected.",
+      "references": []
+    },
+
+    {
+      "id": 10,
+      "categories": ["Observe", "Verified", "Unpublished"],
+      "rule": "`data` is the anchor facet: it is what gets matched against the sensor object. `meaning`, `structure` and `ground` are the context facets, built around the anchor.",
+      "details": "If the sensor object has the rule \"MATCH the word yesterday,\" the anchor is the observed word `yesterday`, and the context facets are built around it. Only the anchor is matched against the sensor object; the context facets describe the anchor, and are never matched in its place.",
+      "references": []
+    },
+    {
+      "id": 11,
+      "categories": ["Intent", "Verified"],
+      "rule": "A sensor object is a JSON object with exactly one key, `sensor`: an array whose entries each have exactly three keys, `trigger`, `emit` and `else`. `trigger` is a tcxp address; `emit` and `else` are each a tcxp address, or `null` when there is nothing to do.",
+      "details": "When the trigger is true, `emit` is evaluated; when it is false, `else` is evaluated. All three keys are always present, so a reader never has to guess whether a missing `else` means \"nothing\" or \"not sent.\"",
+      "references": []
+    },
+    {
+      "id": 12,
+      "categories": ["Verified", "Unpublished"],
+      "rule": "Logic primitives live at `tcxp://tcxp.org/logic/\u003ctype>/\u003cname>`, where `\u003ctype>` is one of `string`, `number`, `boolean`, `array` or `object`. A trigger calls one with an `@`, with its inputs in `params`.",
+      "details": "For example, a trigger that checks for the word `yesterday`, in plain form:\n`tcxp://tcxp.org/@logic/string/contains?{\"params\":[{\"key\":\"word\",\"value\":\"yesterday\"}],\"state\":{\"context\":{\"decide\":[],\"intent\":[],\"observe\":[],\"reason\":[],\"trace\":[]}}}`",
+      "references": []
+    },
+    {
+      "id": 13,
+      "categories": ["Verified", "Unpublished"],
+      "rule": "Every timestamp is written in UTC as defined by [RFC 3339](https://www.rfc-editor.org/rfc/rfc3339), with milliseconds and a trailing `Z`, and is exactly 24 characters long, for example `2026-10-10T16:35:12.345Z`.",
+      "details": "The shape is `YYYY-MM-DDTHH:MM:SS.sssZ`. Milliseconds are always three digits, even when they are zero (`.000`), and UTC is always written as `Z`, never as `+00:00`. Because there is one format with a fixed length, each moment has exactly one spelling, and sorting timestamps as text puts them in time order.",
+      "references": []
+    },
+    {
+      "id": 14,
+      "categories": ["Verified", "Unpublished"],
+      "rule": "Every entry in the five lists of a context and in the four facets of a spike is a row: a JSON object with exactly two keys, `fingerprint` and `ref`. `ref` is the tcxp address of what the row is about, and `fingerprint` records what left the row there.",
+      "details": "`fingerprint` is a JSON object. Each key is a tcxp address naming what it records, and each value is any JSON value. Every fingerprint has the key `tcxp://tcxp.org/fingerprint/when`, whose value is the timestamp at which the row was written, so every row can be sorted by time. Any other keys are up to whoever writes the row. A JSON object has no order and never repeats a key, so canonical form gives each fingerprint exactly one spelling; to record several values for one key, such as two authors, use an array. A row's position in its list is its index, so rows have no index key. For example, a row that also records who wrote it:\n`{\"fingerprint\":{\"tcxp://example.com/fingerprint/who\":\"tcxp://example.com/people/ron\",\"tcxp://tcxp.org/fingerprint/when\":\"2026-10-11T13:06:04.217Z\"},\"ref\":\"tcxp://example.com/units/celsius\"}`",
+      "references": []
+    },
+
+    {
+      "id": 15,
+      "categories": ["Verified", "Unpublished"],
+      "rule": "Three slashes after `tcxp:` mean a local address: a file on the local machine, for example `tcxp:///projects/docs/rules.tcxp`. It has an empty host and is resolved on the local machine, never over a network.",
+      "details": "This is the same form as `file:///` ([RFC 8089](https://www.rfc-editor.org/rfc/rfc8089)): an empty host followed by an absolute path. Relative paths such as `../rules.tcxp` are never used. A local address is written in plain form, for example `tcxp:///projects/My Notes.txt`. With the `@`, the address is a call to a file on the local machine, not to a member in memory: `tcxp:///foo/@bar` is a local call, and `tcxp:/foo/@bar` is a virtual call.",
+      "references": []
+    },
+    {
+      "id": 16,
+      "categories": ["Verified", "Unpublished", "Document"],
+      "rule": "A tcxp document is a text file encoded in UTF-8 ([RFC 3629](https://www.rfc-editor.org/rfc/rfc3629)), with the file extension `.tcxp` and the proposed media type `text/tcxp`. Reading, parsing or displaying it never executes it and never fetches any address it contains.",
+      "details": "A tcxp document holds content that follows these rules; how it is used is up to whatever is using it. tcxp gives names no rules of their own: a domain follows the same rules it has in `https://`, and every other segment is percent-encoded from its UTF-8 bytes when sent over a network, as [RFC 3986, section 2.5](https://www.rfc-editor.org/rfc/rfc3986#section-2.5) requires of new URI schemes. For example, written in a document and then sent over a network:\n`tcxp://example.com/notes/Café`\n`tcxp://example.com/notes/Caf%C3%A9`\n\nReading a document returns its text and nothing else. For example, if `forecast.tcxp` contains `tcxp://example.com/@fn/check-forecast`:\n```js\nconst text = await fs.promises.readFile(\"forecast.tcxp\", \"utf8\")\n// text is the document as written. Nothing was called or fetched.\n// What happens next is up to whatever is using the document.\n```",
+      "references": []
+    },
+
+    {
+      "id": 17,
+      "categories": ["Protocol", "Verified", "Unpublished"],
+      "rule": "A governor is an evaluator: it evaluates tcxp addresses.",
+      "details": "A governor can reference anything in the context, but it does not hold the context.",
+      "references": []
+    },
+
+    {
+      "id": 18,
+      "categories": ["Verified", "Unpublished"],
+      "rule": "The slashes after `tcxp:` follow standard URI syntax ([RFC 3986, section 3](https://www.rfc-editor.org/rfc/rfc3986#section-3)): `//` is followed by a host, `///` is an empty host followed by an absolute path, and `/` is an absolute path with no host.",
+      "details": "These are the same forms `file:` uses ([RFC 8089](https://www.rfc-editor.org/rfc/rfc8089)): `file:///etc/hosts` has an empty host, and `file:/etc/hosts` has no host. Both name the same file. In tcxp, the three forms mean different things: a network address, a local address and a virtual address.",
+      "references": []
+    },
+
+    {
+      "id": 19,
+      "categories": ["Verified", "Unpublished", "Ground"],
+      "rule": "Every tcxp address has the form `tcxp:\u003cground>\u003cboundary>/\u003coptional @>\u003cpointer>`, followed by an optional `?\u003cjson>`. When present, `\u003cjson>` is a JSON object with exactly two keys: `params`, an array of key-value pairs, and `state`, one object. An `@` right after the boundary makes the address a call, and it is the only `@` before the `?`.",
+      "details": "The ground is `/` (virtual), `//` (network) or `///` (local). The boundary is the first segment after the ground, such as `example.com` or `foo`, and the pointer is the rest of the path. `params` holds the inputs, in order, and `state` holds the state before the call. An address without `@` is a reference, or a call written down but not made. Values inside the JSON may contain `@`. The JSON is in canonical form ([RFC 8785](https://www.rfc-editor.org/rfc/rfc8785)). For example, decoded so it can be read:\n`tcxp:/foo/@bar?{\"params\":[{\"key\":\"x\",\"value\":1}],\"state\":{\"context\":{\"decide\":[],\"intent\":[],\"observe\":[],\"reason\":[],\"trace\":[]}}}`\nis the call:\n`tcxp.foo.bar({ params: [{ key: \"x\", value: 1 }], state: { context: { … } } })`\nThe same address without the `@` is that call written down but not made. Because a list's order is part of the object, swapping two entries in `params` makes a different call.",
+      "references": []
+    },
+    {
+      "id": 20,
+      "categories": ["Verified", "Unpublished", "Ground"],
+      "rule": "A tcxp address is written and read in plain form. It is percent-encoded only where a URI is required, which gives its URI form. The `@` at the start of the path's second segment is syntax, like `/` and `?`: it marks a call and is never part of a name.",
+      "details": "The governor reads the plain form, so virtual and local addresses are never percent-encoded, and neither is any address written in a document. An address is percent-encoded only where a URI is required. Its `/`, `@` and `?` stay as they are, because they are syntax. Each pair below shows the plain form, then the same address as a URI.\n\nNothing changes, because there is no name character or JSON to encode:\n`tcxp://test.com/@hello`\n`tcxp://test.com/@hello`\n\nThe space in the name is encoded; the `@` is not:\n`tcxp://test.com/My Notes/@hello`\n`tcxp://test.com/My%20Notes/@hello`\n\nThe JSON is encoded; the `@` and the `?` are not:\n`tcxp://test.com/@hello?{\"params\":[{\"key\":\"name\",\"value\":\"Ron Itelman\"}],\"state\":{\"context\":{\"decide\":[],\"intent\":[],\"observe\":[],\"reason\":[],\"trace\":[]}}}`\n`tcxp://test.com/@hello?%7B%22params%22%3A%5B%7B%22key%22%3A%22name%22%2C%22value%22%3A%22Ron%20Itelman%22%7D%5D%2C%22state%22%3A%7B%22context%22%3A%7B%22decide%22%3A%5B%5D%2C%22intent%22%3A%5B%5D%2C%22observe%22%3A%5B%5D%2C%22reason%22%3A%5B%5D%2C%22trace%22%3A%5B%5D%7D%7D%7D`\n\nBoth are the call:\n```js\nhello({\n  params: [\n    { key: \"name\", value: \"Ron Itelman\" }\n  ],\n  state: {\n    context: { decide: [], intent: [], observe: [], reason: [], trace: [] }\n  }\n})\n```\n\nBecause the `@` is syntax, no name in the path contains `@`.",
+      "references": []
+    },
+    {
+      "id": 21,
+      "categories": ["Verified", "Unpublished", "Ground"],
+      "rule": "`params` is an array of key-value pairs. Each entry is a JSON object with exactly two keys: `key`, a string, and `value`, any JSON value. The entries are the inputs, in order.",
+      "details": "The same call in three forms: JavaScript, the plain address, and the address as a URI.\n\nJavaScript:\n```js\nhello({\n  params: [\n    { key: \"phrase-you-expect\", value: \"world\" },\n    { key: \"count\", value: 2 }\n  ],\n  state: {\n    context: { decide: [], intent: [], observe: [], reason: [], trace: [] }\n  }\n})\n```\n\nPlain:\n`tcxp://test.com/@hello?{\"params\":[{\"key\":\"phrase-you-expect\",\"value\":\"world\"},{\"key\":\"count\",\"value\":2}],\"state\":{\"context\":{\"decide\":[],\"intent\":[],\"observe\":[],\"reason\":[],\"trace\":[]}}}`\n\nURI:\n`tcxp://test.com/@hello?%7B%22params%22%3A%5B%7B%22key%22%3A%22phrase-you-expect%22%2C%22value%22%3A%22world%22%7D%2C%7B%22key%22%3A%22count%22%2C%22value%22%3A2%7D%5D%2C%22state%22%3A%7B%22context%22%3A%7B%22decide%22%3A%5B%5D%2C%22intent%22%3A%5B%5D%2C%22observe%22%3A%5B%5D%2C%22reason%22%3A%5B%5D%2C%22trace%22%3A%5B%5D%7D%7D%7D`\n\n`\"world\"` is a string and `2` is a number: each `value` keeps its JSON type.",
+      "references": []
+    },
+    {
+      "id": 22,
+      "categories": ["Observe", "Verified", "Unpublished"],
+      "rule": "Each row in `meaning` refers to a semantic or pragmatic reference for the anchor, readable by a person either where it points or in the address itself.",
+      "details": "Any tcxp address may be used, and how the addresses are named and organized is up to whoever writes them. For example, a sensor observes a temperature column, but the numbers alone do not say whether they are Celsius or Fahrenheit. A row in the spike's `meaning` facet says so:\n```json\n{\"data\":[{\"fingerprint\":{\"tcxp://tcxp.org/fingerprint/when\":\"2026-10-11T13:06:04.217Z\"},\"ref\":\"tcxp://example.com/sensors/thermo-1/temperature\"}],\"ground\":[],\"meaning\":[{\"fingerprint\":{\"tcxp://tcxp.org/fingerprint/when\":\"2026-10-11T13:06:04.217Z\"},\"ref\":\"tcxp://example.com/units/celsius\"}],\"structure\":[]}\n```\nWithout that row, a reader would have to guess the unit.",
+      "references": []
+    },
+    {
+      "id": 23,
+      "categories": ["Observe", "Verified", "Unpublished"],
+      "rule": "Each row in `structure` refers to a schema the anchor conforms to, such as a regular expression or a JSON Schema.",
+      "details": "A schema says what shape the anchor has, so a reader can check it before relying on it. Each rule of the shape can be its own row. For example, a row that points to a JSON Schema the anchor validates against:\n`{\"fingerprint\":{\"tcxp://tcxp.org/fingerprint/when\":\"2026-10-11T13:06:04.217Z\"},\"ref\":\"tcxp://example.com/schemas/temperature\"}`",
+      "references": []
+    },
+    {
+      "id": 24,
+      "categories": ["Observe", "Verified", "Unpublished"],
+      "rule": "Each row in `ground` refers to a real-world condition that grounds the data, meaning and structure to a decision: something a reader must account for before acting on the anchor.",
+      "details": "The data, its meaning and its structure can all be correct and still lead to a wrong decision if the reader's situation differs. For example, a sea captain reads the data to make a decision, and a row in `ground` says that the freezing temperature of this ocean differs:\n`{\"fingerprint\":{\"tcxp://tcxp.org/fingerprint/when\":\"2026-10-11T13:06:04.217Z\"},\"ref\":\"tcxp://example.com/conditions/arctic-freezing-point\"}`",
+      "references": []
+    },
+    {
+      "id": 25,
+      "categories": ["Protocol", "Verified", "Unpublished"],
+      "rule": "A governor's verdict is exactly one of `ACT`, `ASK` or `HALT`. `HALT` is absorbing: once it is reached, nothing else in the same evaluation changes it to `ASK` or `ACT`.",
+      "details": "`ACT` means the context is enough to proceed. `ASK` means something needed is missing or unresolved, so the governor asks for it before proceeding. `HALT` means proceeding is not allowed. The verdict decides only what happens next. It is separate from the outcome of the work itself, such as approve or reject. For example, before a request is sent to a model, a governor returns `ASK` while the user has not chosen which version of a file to use, and `ACT` once they have.",
+      "references": []
+    }
+  ]
+};
+    </script>
+
+    <!--
+      2. SETTINGS (optional)
+      meta:   document title, editors and the boilerplate text.
+      layout: which rules go in which section, in order. Any rule not listed
+              here is added automatically under "Other rules", sorted by id.
+              Set `const layout = [];` to list every rule in one section by id.
+    -->
+    <script class="remove">
+const meta = {
+  title: "Typed Context Protocol (tcxp)",
+  shortName: "tcxp",
+  specStatus: "CG-DRAFT",
+  editors: [{ name: "Ron Itelman", url: "mailto:ron@ronitelman.com" }],
+  abstract:
+    "This document specifies the Typed Context Protocol (tcxp): the syntax of tcxp addresses, how they are written, encoded and sent over a network, the context and spike objects they carry, and the sensor objects and governors that evaluate them. It also defines the tcxp document and its proposed media type, `text/tcxp`.",
+  sotd:
+    "This is an alpha draft. Every rule in it is a design proposal verified by the editors; implementation experience and test results will be reported in later drafts. Each rule is identified by its tcxp address, `tcxp://tcxp.org/rule/N`, which is permanent once published, and can be linked at `#rule-N`.",
+  conformance:
+    "Every rule in this document, identified by its `tcxp://tcxp.org/rule/` address, is normative. Breaking a rule breaks the protocol.",
+  localBiblio: {
+    RFC10008: {
+      title: "The HTTP QUERY Method",
+      href: "https://www.rfc-editor.org/rfc/rfc10008",
+      publisher: "IETF",
+      status: "Proposed Standard",
+    },
+  },
+  respec: {
+    group: "typed-context-protocol",
+    github: "typed-context-protocol/specification",
+  },
+};
+
+const mediaType = [
+  "This registration is for community review and will be submitted to the IESG for review, approval, and registration with IANA.",
+  "",
+  "| Field | Value |",
+  "|---|---|",
+  "| Type name | `text` |",
+  "| Subtype name | `tcxp` |",
+  "| Required parameters | None |",
+  "| Optional parameters | None. A tcxp document is always encoded in UTF-8 [RFC 3629](https://www.rfc-editor.org/rfc/rfc3629). |",
+  "| Encoding considerations | 8bit |",
+  "| Security considerations | Reading, parsing or displaying a tcxp document never executes it and never fetches any address it contains. Addresses in a document can carry data and context, so a document should be treated like any URI that may contain sensitive data. |",
+  "| Interoperability considerations | Addresses in a document are written in plain form, and the JSON in them is in canonical form [RFC 8785](https://www.rfc-editor.org/rfc/rfc8785), so the same address has the same bytes in every document. |",
+  "| Published specification | This document |",
+  "| Applications that use this media type | The open-source tcxp libraries, published on npm as `@tcxp/tcxp` and on PyPI as `tcxp`. |",
+  "| Fragment identifier considerations | None defined |",
+  "| Deprecated alias names | None |",
+  "| Magic number(s) | None |",
+  "| File extension(s) | `.tcxp` |",
+  "| Macintosh file type code(s) | None |",
+  "| Person and email address to contact | Ron Itelman, ron@ronitelman.com |",
+  "| Intended usage | COMMON |",
+  "| Restrictions on usage | None |",
+  "| Author | W3C Typed Context Protocol Community Group |",
+  "| Change controller | W3C |",
+].join("\n");
+
+const layout = [
+  { title: "Introduction", rules: [1, 6] },
+  {
+    title: "Addresses",
+    sections: [
+      { title: "Address syntax", rules: [0, 19, 2] },
+      { title: "Grounds", rules: [18, 3, 4, 15] },
+      { title: "Paths", rules: [5] },
+      { title: "Parameters", rules: [21] },
+      { title: "Encoding and transport", rules: [20, 8] },
+    ],
+  },
+  { title: "Context", rules: [7, 14, 13] },
+  {
+    title: "Observation and intent",
+    sections: [
+      { title: "Spikes and facets", rules: [9, 10, 22, 23, 24] },
+      { title: "Sensor objects", rules: [11] },
+      { title: "Logic primitives", rules: [12] },
+    ],
+  },
+  { title: "Governors", rules: [17] },
+  { title: "Documents", rules: [16] },
+  { title: "Media type registration", appendix: true, intro: mediaType },
+];
+    </script>
+
+    <!-- 3. RENDERER: no need to edit below this line. -->
+    <script class="remove">
+(function () {
+  "use strict";
+
+  if (typeof meta !== "undefined" && meta.title) document.title = meta.title;
+
+  // ---------- small markdown renderer (inline code, links, fences, tables) ----------
+
+  function esc(s) {
+    return String(s)
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;");
+  }
+
+  // True while ReSpec is rendering; false in the offline fallback.
+  let withRespec = true;
+
+  function link(text, url) {
+    // RFC links become ReSpec citations so they land in the References section.
+    const rfc = url.match(/^https?:\/\/(?:www\.)?rfc-editor\.org\/rfc\/rfc(\d+)(?:\.html|\.txt)?(#[\w.-]+)?$/i);
+    if (rfc && withRespec) {
+      // A section of an RFC: link to it with data-cite.
+      if (rfc[2]) return `<a data-cite="RFC${rfc[1]}${rfc[2]}">${text}</a>`;
+      // A whole RFC: use ReSpec's citation shorthand. data-cite without a
+      // section makes ReSpec look the link text up as a term, which fails.
+      const cite = `[[RFC${rfc[1]}]]`;
+      return /^RFC\s*\d+$/i.test(text.trim()) ? cite : `${text} ${cite}`;
+    }
+    return `<a href="${esc(url)}">${text}</a>`;
+  }
+
+  function inline(s) {
+    return String(s)
+      .split(/(`[^`]*`)/)
+      .map((seg) => {
+        if (/^`[^`]*`$/.test(seg)) return `<code>${esc(seg.slice(1, -1))}</code>`;
+        return esc(seg).replace(/\[([^\]]+)\]\(([^)\s]+)\)/g, (_, t, u) =>
+          link(t, u.replace(/&amp;/g, "&"))
+        );
+      })
+      .join("");
+  }
+
+  function cells(line) {
+    line = line.trim().replace(/^\|/, "").replace(/\|$/, "");
+    const out = [];
+    let cur = "";
+    let tick = false;
+    for (const ch of line) {
+      if (ch === "`") tick = !tick;
+      if (ch === "|" && !tick) {
+        out.push(cur.trim());
+        cur = "";
+      } else cur += ch;
+    }
+    out.push(cur.trim());
+    return out;
+  }
+
+  const isTableRow = (l) => /^\s*\|.*\|\s*$/.test(l);
+  const isSeparator = (l) => /^\s*\|?\s*:?-{3,}/.test(l);
+
+  function table(lines) {
+    const head = cells(lines[0]);
+    const rows = lines.slice(isSeparator(lines[1] || "") ? 2 : 1).map(cells);
+    return (
+      `<table class="data"><thead><tr>${head.map((c) => `<th>${inline(c)}</th>`).join("")}</tr></thead>` +
+      `<tbody>${rows.map((r) => `<tr>${r.map((c) => `<td>${inline(c)}</td>`).join("")}</tr>`).join("")}</tbody></table>`
+    );
+  }
+
+  function codeClass(lang, body) {
+    lang = (lang || "").toLowerCase();
+    if (/^\s*tcxp:/i.test(body)) return "nohighlight address";
+    if (/^(js|javascript|mjs|ts|typescript)$/.test(lang)) return "js";
+    if (lang === "json") {
+      try {
+        JSON.parse(body);
+        return "json";
+      } catch (e) {
+        return "nohighlight address";
+      }
+    }
+    if (!lang || /^(md|markdown|text|txt|plain)$/.test(lang)) return "nohighlight";
+    return lang;
+  }
+
+  function fence(lang, body) {
+    const lines = body.split("\n").filter((l) => l.trim() !== "");
+    if (lines.length >= 2 && lines.every(isTableRow) && isSeparator(lines[1])) return table(lines);
+    return `<pre class="${codeClass(lang, body)} nolinks">${esc(body)}</pre>`;
+  }
+
+  function textBlocks(text) {
+    let out = "";
+    let para = [];
+    let code = [];
+    let rows = [];
+    const flushP = () => {
+      if (para.length) out += `<p>${inline(para.join(" "))}</p>`;
+      para = [];
+    };
+    const flushC = () => {
+      if (code.length) {
+        const body = code.join("\n");
+        const cls = code.every((l) => /^tcxp:/i.test(l)) ? "nohighlight address" : "js";
+        out += `<pre class="${cls} nolinks">${esc(body)}</pre>`;
+      }
+      code = [];
+    };
+    const flushT = () => {
+      if (rows.length) out += rows.length >= 2 ? table(rows) : `<p>${inline(rows[0])}</p>`;
+      rows = [];
+    };
+    for (const raw of text.split("\n")) {
+      const line = raw.trim();
+      if (!line) {
+        flushP(); flushC(); flushT();
+        continue;
+      }
+      if (isTableRow(line)) {
+        flushP(); flushC();
+        rows.push(line);
+        continue;
+      }
+      flushT();
+      // A line that is only inline code is shown as a code block.
+      const m = line.match(/^`([^`]+)`$/);
+      if (m) {
+        flushP();
+        code.push(m[1]);
+      } else {
+        flushC();
+        para.push(line);
+      }
+    }
+    flushP(); flushC(); flushT();
+    return out;
+  }
+
+  function blocks(md) {
+    if (!md) return "";
+    md = String(md).replace(/\r\n?/g, "\n");
+    const re = /```([\w+-]*)[ \t]*\n([\s\S]*?)\n?```/g;
+    let out = "";
+    let last = 0;
+    let m;
+    while ((m = re.exec(md))) {
+      out += textBlocks(md.slice(last, m.index));
+      out += fence(m[1], m[2]);
+      last = re.lastIndex;
+    }
+    return out + textBlocks(md.slice(last));
+  }
+
+  // ---------- spec builder ----------
+
+  async function renderSpec(config, doc, utils) {
+    withRespec = !!utils;
+    const warn = (msg) =>
+      utils && typeof utils.showWarning === "function"
+        ? utils.showWarning(msg, "tcxp-render")
+        : console.warn(msg);
+    const fail = (msg) => {
+      doc.body.innerHTML =
+        `<section id="abstract"><p>The rule data could not be rendered.</p></section>` +
+        `<section id="sotd"><p class="render-error">${esc(msg)}</p></section>`;
+      console.error(msg);
+    };
+
+    let json;
+    if (typeof data !== "undefined") json = data;
+    else {
+      try { json = await dataPromise; }
+      catch (e) { return fail(`Couldn't load /data/rules.json: ${e.message}`); }
+    }
+    if (!json || !Array.isArray(json.rules)) return fail("The data must be an object with a `rules` array.");
+
+    const rules = json.rules;
+    const byId = new Map();
+    rules.forEach((r, i) => {
+      if (!r || r.id === undefined || r.id === null) return warn(`Rule at position ${i} has no id and was skipped.`);
+      const key = String(r.id);
+      if (byId.has(key)) return warn(`Duplicate rule id ${key}: only the first one is shown.`);
+      byId.set(key, r);
+    });
+
+    const anchor = (id) => "rule-" + String(id).replace(/[^\w-]/g, "-");
+    const usedIds = new Set(["abstract", "sotd", "conformance", "rule-index", "index", "references"]);
+    const sectionId = (title) => {
+      let base = String(title).toLowerCase().replace(/[^\w]+/g, "-").replace(/^-|-$/g, "") || "section";
+      let id = base;
+      for (let n = 2; usedIds.has(id); n++) id = `${base}-${n}`;
+      usedIds.add(id);
+      return id;
+    };
+
+    const placed = new Set();
+    const sectionOf = new Map();
+
+    function refLink(ref) {
+      if ((typeof ref === "number" || typeof ref === "string") && byId.has(String(ref)))
+        return `<a href="#${anchor(ref)}">rule ${esc(ref)}</a>`;
+      if (typeof ref === "string" && /^https?:\/\//.test(ref)) return link(esc(ref), ref);
+      if (typeof ref === "string") return inline(ref);
+      return `<code>${esc(JSON.stringify(ref))}</code>`;
+    }
+
+    function ruleBox(r) {
+      const refs = Array.isArray(r.references) && r.references.length
+        ? `<p class="rule-refs">See also: ${r.references.map(refLink).join(", ")}</p>`
+        : "";
+      const addr = `tcxp://tcxp.org/rule/${r.id}`;
+      return (
+        `<div class="rule" id="${anchor(r.id)}">` +
+        `<p class="rule-addr"><a href="#${anchor(r.id)}"><code>${esc(addr)}</code></a></p>` +
+        blocks(r.rule || "") +
+        blocks(r.details || "") +
+        refs +
+        `</div>`
+      );
+    }
+
+    function section(sec, level) {
+      const id = sectionId(sec.title);
+      let inner = (sec.html || "") + (sec.intro ? blocks(sec.intro) : "");
+      for (const rid of sec.rules || []) {
+        const key = String(rid);
+        if (!byId.has(key)) {
+          warn(`Layout lists rule ${key}, which is not in the data.`);
+          continue;
+        }
+        if (placed.has(key)) {
+          warn(`Layout lists rule ${key} more than once; it is shown only the first time.`);
+          continue;
+        }
+        placed.add(key);
+        sectionOf.set(key, id);
+        inner += ruleBox(byId.get(key));
+      }
+      for (const sub of sec.sections || []) inner += section(sub, Math.min(level + 1, 6));
+      return `<section id="${id}"${sec.appendix ? ' class="appendix"' : ""}><h${level}>${esc(sec.title)}</h${level}>${inner}</section>`;
+    }
+
+    const plan = typeof layout !== "undefined" && Array.isArray(layout) ? layout.slice() : [];
+    const sortIds = (a, b) => {
+      const na = Number(a), nb = Number(b);
+      return !isNaN(na) && !isNaN(nb) ? na - nb : String(a).localeCompare(String(b));
+    };
+    // Rules the layout doesn't mention go in a catch-all section, sorted by id.
+    const mentioned = new Set();
+    (function collect(list) {
+      for (const s of list) {
+        (s.rules || []).forEach((r) => mentioned.add(String(r)));
+        collect(s.sections || []);
+      }
+    })(plan);
+    const leftovers = [...byId.keys()].filter((k) => !mentioned.has(k)).sort(sortIds);
+    if (leftovers.length) plan.push({ title: plan.length ? "Other rules" : "Rules", rules: leftovers });
+
+    const m = typeof meta !== "undefined" ? meta : {};
+    const body = plan.map((s) => section(s, 2)).join("");
+
+    const indexRows = [...byId.keys()]
+      .sort(sortIds)
+      .map((key) => {
+        const r = byId.get(key);
+        return (
+          `<tr><td><a href="#${anchor(key)}"><code>tcxp://tcxp.org/rule/${esc(key)}</code></a></td>` +
+          `<td><a href="#${sectionOf.get(key)}"></a></td></tr>`
+        );
+      })
+      .join("");
+
+    doc.body.innerHTML =
+      `<section id="abstract">${blocks(m.abstract || "")}</section>` +
+      `<section id="sotd">${blocks(m.sotd || "")}</section>` +
+      `<section id="conformance">${blocks(m.conformance || "")}</section>` +
+      body +
+      `<section id="rule-index" class="appendix informative"><h2>Rule index</h2>` +
+      `<table class="data"><caption>Every rule by its tcxp address</caption>` +
+      `<thead><tr><th>Address</th><th>Section</th></tr></thead>` +
+      `<tbody>${indexRows}</tbody></table></section>` +
+      `<section id="index" class="appendix"></section>`;
+  }
+
+  const m = typeof meta !== "undefined" ? meta : {};
+  window.respecConfig = Object.assign(
+    {
+      specStatus: m.specStatus || "unofficial",
+      shortName: m.shortName,
+      editors: m.editors || [{ name: "Editor" }],
+      latestVersion: null,
+      localBiblio: m.localBiblio || {},
+    },
+    m.respec || {},
+    { preProcess: [renderSpec].concat((m.respec && m.respec.preProcess) || []) }
+  );
+  // Exposed for testing.
+  window.tcxpRender = { renderSpec, blocks, inline };
+})();
+    </script>
+    <script
+      src="https://www.w3.org/Tools/respec/respec-w3c"
+      class="remove"
+      async
+    ></script>
+    <script class="remove">
+      // If ReSpec can't load (offline, or a preview that blocks w3.org), show the rules anyway.
+      setTimeout(function () {
+        if (document.body && !document.body.children.length && window.tcxpRender) {
+          window.tcxpRender.renderSpec(window.respecConfig, document, null).then(function () {
+            document.body.insertAdjacentHTML("afterbegin",
+              "<h1>" + document.title + "</h1><p><em>Preview without ReSpec: the W3C header, boilerplate and references appear when ReSpec loads.</em></p>");
+          });
+        }
+      }, 4000);
+    </script>
+  </head>
+  <body></body>
+</html>
