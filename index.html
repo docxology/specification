@@ -169,8 +169,8 @@ const data = {
       "categories": ["Verified", "Unpublished"],
       "section": "Sensors",
       "title": "Logic Primitives",
-      "rule": "Logic primitives live at `tcxp:tcxp/logic/\u003ctype>/\u003cname>`, where `\u003ctype>` is one of `string`, `number`, `boolean`, `array` or `object`. A trigger calls one as `tcxp:/tcxp/@logic/\u003ctype>/\u003cname>`, with its inputs in params.",
-      "details": "For example, a trigger that checks for the word `yesterday`, in plain form:\n`tcxp:/tcxp@logic/string/contains?{\"params\":[{\"key\":\"word\",\"value\":\"yesterday\"}],\"state\":{\"context\":{\"decide\":[],\"intent\":[],\"observe\":[],\"reason\":[],\"trace\":[]}}}`",
+      "rule": "Logic primitives live at `tcxp:/tcxp/logic/\u003ctype>/\u003cname>`, where `\u003ctype>` is one of `string`, `number`, `boolean`, `array` or `object`. A trigger calls one as `tcxp:/tcxp/@logic/\u003ctype>/\u003cname>`, with its inputs in `params`.",
+      "details": "For example, a trigger that checks for the word `yesterday`, in plain form:\n`tcxp:/tcxp/@logic/string/contains?{\"params\":[{\"key\":\"word\",\"value\":\"yesterday\"}],\"state\":{\"context\":{\"decide\":[],\"intent\":[],\"observe\":[],\"reason\":[],\"trace\":[]}}}`",
       "references": []
     },
     {
@@ -188,7 +188,7 @@ const data = {
       "section": "Context",
       "title": "Rows and Fingerprints",
       "rule": "Every entry in the five lists of a context and in the four facets of a spike is a row: a JSON object with exactly two keys, `fingerprint` and `ref`. `ref` is the tcxp address of what the row is about, and `fingerprint` records what left the row there.",
-      "details": "`fingerprint` is a JSON object. Each key is a tcxp address naming what it records, and each value is any JSON value. Every fingerprint has the key `tcxp:tcxp/fingerprint/when`, whose value is the timestamp at which the row was written, so every row can be sorted by time. Any other keys are up to whoever writes the row. A JSON object has no order and never repeats a key, so canonical form gives each fingerprint exactly one spelling; to record several values for one key, such as two authors, use an array. A row's position in its list is its index, so rows have no index key. For example, a row that also records who wrote it:\n`{\"fingerprint\":{\"tcxp://example.com/fingerprint/who\":\"tcxp://example.com/people/ron\",\"tcxp:tcxp/fingerprint/when\":\"2026-10-11T13:06:04.217Z\"},\"ref\":\"tcxp://example.com/units/celsius\"}`",
+      "details": "`fingerprint` is a JSON object. Each key is a tcxp address naming what it records, and each value is any JSON value. Every fingerprint has the key `tcxp:/tcxp/fingerprint/when`, whose value is the timestamp at which the row was written, so every row can be sorted by time. Any other keys are up to whoever writes the row. A JSON object has no order and never repeats a key, so canonical form gives each fingerprint exactly one spelling; to record several values for one key, such as two authors, use an array. A row's position in its list is its index, so rows have no index key. For example, a row that also records who wrote it:\n`{\"fingerprint\":{\"tcxp://example.com/fingerprint/who\":\"tcxp://example.com/people/ron\",\"tcxp:/tcxp/fingerprint/when\":\"2026-10-11T13:06:04.217Z\"},\"ref\":\"tcxp://example.com/units/celsius\"}`",
       "references": []
     },
 
@@ -264,7 +264,7 @@ const data = {
       "section": "Spikes",
       "title": "Meaning Facet",
       "rule": "Each row in `meaning` refers to a semantic or pragmatic reference for the anchor, readable by a person either where it points or in the address itself.",
-      "details": "Any tcxp address may be used, and how the addresses are named and organized is up to whoever writes them. For example, a sensor observes a temperature column, but the numbers alone do not say whether they are Celsius or Fahrenheit. A row in the spike's `meaning` facet says so:\n```json\n{\"data\":[{\"fingerprint\":{\"tcxp:tcxp/fingerprint/when\":\"2026-10-11T13:06:04.217Z\"},\"ref\":\"tcxp://example.com/sensors/thermo-1/temperature\"}],\"ground\":[],\"meaning\":[{\"fingerprint\":{\"tcxp:tcxp/fingerprint/when\":\"2026-10-11T13:06:04.217Z\"},\"ref\":\"tcxp://example.com/units/celsius\"}],\"structure\":[]}\n```\nWithout that row, a reader would have to guess the unit.",
+      "details": "Any tcxp address may be used, and how the addresses are named and organized is up to whoever writes them. For example, a sensor observes a temperature column, but the numbers alone do not say whether they are Celsius or Fahrenheit. A row in the spike's `meaning` facet says so:\n```json\n{\"data\":[{\"fingerprint\":{\"tcxp:/tcxp/fingerprint/when\":\"2026-10-11T13:06:04.217Z\"},\"ref\":\"tcxp://example.com/sensors/thermo-1/temperature\"}],\"ground\":[],\"meaning\":[{\"fingerprint\":{\"tcxp:/tcxp/fingerprint/when\":\"2026-10-11T13:06:04.217Z\"},\"ref\":\"tcxp://example.com/units/celsius\"}],\"structure\":[]}\n```\nWithout that row, a reader would have to guess the unit.",
       "references": []
     },
     {
@@ -273,7 +273,7 @@ const data = {
       "section": "Spikes",
       "title": "Structure Facet",
       "rule": "Each row in `structure` refers to a schema the anchor conforms to, such as a regular expression or a JSON Schema.",
-      "details": "A schema says what shape the anchor has, so a reader can check it before relying on it. Each rule of the shape can be its own row. For example, a row that points to a JSON Schema the anchor validates against:\n`{\"fingerprint\":{\"tcxp:tcxp/fingerprint/when\":\"2026-10-11T13:06:04.217Z\"},\"ref\":\"tcxp://example.com/schemas/temperature\"}`",
+      "details": "A schema says what shape the anchor has, so a reader can check it before relying on it. Each rule of the shape can be its own row. For example, a row that points to a JSON Schema the anchor validates against:\n`{\"fingerprint\":{\"tcxp:/tcxp/fingerprint/when\":\"2026-10-11T13:06:04.217Z\"},\"ref\":\"tcxp://example.com/schemas/temperature\"}`",
       "references": []
     },
     {
@@ -282,7 +282,7 @@ const data = {
       "section": "Spikes",
       "title": "Ground Facet",
       "rule": "Each row in `ground` refers to a real-world condition that grounds the data, meaning and structure to a decision: something a reader must account for before acting on the anchor.",
-      "details": "The data, its meaning and its structure can all be correct and still lead to a wrong decision if the reader's situation differs. For example, a sea captain reads the data to make a decision, and a row in `ground` says that the freezing temperature of this ocean differs:\n`{\"fingerprint\":{\"tcxp:tcxp/fingerprint/when\":\"2026-10-11T13:06:04.217Z\"},\"ref\":\"tcxp://example.com/conditions/arctic-freezing-point\"}`",
+      "details": "The data, its meaning and its structure can all be correct and still lead to a wrong decision if the reader's situation differs. For example, a sea captain reads the data to make a decision, and a row in `ground` says that the freezing temperature of this ocean differs:\n`{\"fingerprint\":{\"tcxp:/tcxp/fingerprint/when\":\"2026-10-11T13:06:04.217Z\"},\"ref\":\"tcxp://example.com/conditions/arctic-freezing-point\"}`",
       "references": []
     },
     {
@@ -300,7 +300,7 @@ const data = {
       "section": "Foundations",
       "title": "Shared Names",
       "rule": "Names that every implementation shares are virtual addresses under the boundary `tcxp`, such as `tcxp:/tcxp/fingerprint/when`. This specification alone defines what each one means, and no other use of the boundary `tcxp` is allowed.",
-      "details": "A virtual address has no host and is never fetched, so no domain owner or website can define or change a shared name, and every implementation provides the same names in memory. Shared names include `tcxp:/tcxp/fingerprint/when` and the logic primitives under `tcxp:/tcxp/logic/`. Names are added only through the W3C Typed Context Protocol Community Group, and are never removed or changed in meaning.",
+      "details": "A virtual address has no host and is never fetched, so no domain owner or website can define or change a shared name, and every implementation provides the same names in memory. Shared names include `tcxp:/tcxp/fingerprint/when`, the logic primitives under `tcxp:/tcxp/logic/`, and each rule of this specification at `tcxp:/tcxp/rule/\u003cid>`. Names are added only through the W3C Typed Context Protocol Community Group, and are never removed or changed in meaning.",
       "references": []
     }
   ]
